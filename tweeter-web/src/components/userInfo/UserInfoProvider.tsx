@@ -11,10 +11,7 @@ interface Props {
 }
 
 const UserInfoProvider: React.FC<Props> = ({ children }) => {
-  const saveToLocalStorage = (
-    currentUser: User,
-    authToken: AuthToken
-  ): void => {
+  const saveToLocalStorage = (currentUser: User, authToken: AuthToken): void => {
     localStorage.setItem(CURRENT_USER_KEY, currentUser.toJson());
     localStorage.setItem(AUTH_TOKEN_KEY, authToken.toJson());
   };
@@ -27,7 +24,7 @@ const UserInfoProvider: React.FC<Props> = ({ children }) => {
       return {
         currentUser: loggedInUser,
         displayedUser: loggedInUser,
-        authToken: authToken,
+        authToken: authToken
       };
     } else {
       return { currentUser: null, displayedUser: null, authToken: null };
@@ -40,7 +37,7 @@ const UserInfoProvider: React.FC<Props> = ({ children }) => {
   };
 
   const [userInfo, setUserInfo] = useState({
-    ...retrieveFromLocalStorage(),
+    ...retrieveFromLocalStorage()
   });
 
   const updateUserInfo = useCallback(
@@ -54,7 +51,7 @@ const UserInfoProvider: React.FC<Props> = ({ children }) => {
         return {
           currentUser: currentUser,
           displayedUser: displayedUser,
-          authToken: authToken,
+          authToken: authToken
         };
       });
 
@@ -70,7 +67,7 @@ const UserInfoProvider: React.FC<Props> = ({ children }) => {
       return {
         currentUser: null,
         displayedUser: null,
-        authToken: null,
+        authToken: null
       };
     });
 
@@ -87,7 +84,7 @@ const UserInfoProvider: React.FC<Props> = ({ children }) => {
     () => ({
       updateUserInfo,
       clearUserInfo,
-      setDisplayedUser,
+      setDisplayedUser
     }),
     [updateUserInfo, clearUserInfo, setDisplayedUser]
   );
