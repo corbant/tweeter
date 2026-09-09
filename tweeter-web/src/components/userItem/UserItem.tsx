@@ -1,12 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { AuthToken, User, FakeData } from "tweeter-shared";
-import { ToastType } from "../toaster/Toast";
 import { useContext } from "react";
-import {
-  UserInfoActionsContext,
-  UserInfoContext,
-} from "../userInfo/UserInfoContexts";
-import { ToastActionsContext } from "../toaster/ToastContexts";
+import { UserInfoActionsContext, UserInfoContext } from "../userInfo/UserInfoContexts";
+import { useMessageActions } from "../toaster/MessageHooks";
 
 interface Props {
   user: User;
@@ -14,7 +10,7 @@ interface Props {
 }
 
 const UserItem = (props: Props) => {
-  const { displayToast } = useContext(ToastActionsContext);
+  const { displayErrorMessage } = useMessageActions();
   const { displayedUser, authToken } = useContext(UserInfoContext);
   const { setDisplayedUser } = useContext(UserInfoActionsContext);
 
@@ -35,11 +31,7 @@ const UserItem = (props: Props) => {
         }
       }
     } catch (error) {
-      displayToast(
-        ToastType.Error,
-        `Failed to get user because of exception: ${error}`,
-        0
-      );
+      displayErrorMessage(`Failed to get user because of exception: ${error}`);
     }
   };
 
@@ -48,10 +40,7 @@ const UserItem = (props: Props) => {
     return value.substring(index);
   };
 
-  const getUser = async (
-    authToken: AuthToken,
-    alias: string
-  ): Promise<User | null> => {
+  const getUser = async (authToken: AuthToken, alias: string): Promise<User | null> => {
     // TODO: Replace with the result of calling server
     return FakeData.instance.findUserByAlias(alias);
   };
@@ -61,12 +50,7 @@ const UserItem = (props: Props) => {
       <div className="container px-0">
         <div className="row mx-0 px-0">
           <div className="col-auto p-3">
-            <img
-              src={props.user.imageUrl}
-              className="img-fluid"
-              width="80"
-              alt="Posting user"
-            />
+            <img src={props.user.imageUrl} className="img-fluid" width="80" alt="Posting user" />
           </div>
           <div className="col">
             <h2>
@@ -74,10 +58,7 @@ const UserItem = (props: Props) => {
                 {props.user.firstName} {props.user.lastName}
               </b>{" "}
               -{" "}
-              <Link
-                to={`${props.featurePath}/${props.user.alias}`}
-                onClick={navigateToUser}
-              >
+              <Link to={`${props.featurePath}/${props.user.alias}`} onClick={navigateToUser}>
                 {props.user.alias}
               </Link>
             </h2>
