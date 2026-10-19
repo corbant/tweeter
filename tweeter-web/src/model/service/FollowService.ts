@@ -30,8 +30,12 @@ class FollowService {
   public async getFolloweeCount(authToken: AuthToken, userAlias: string): Promise<number> {
     return FakeData.instance.getFolloweeCount(userAlias);
   }
-  public async follow(authToken: AuthToken, userAlias: string): Promise<void> {}
-  public async unfollow(authToken: AuthToken, userAlias: string): Promise<void> {}
+  public async follow(authToken: AuthToken, userAlias: string): Promise<void> {
+    return new Promise((f) => setTimeout(f, 2000));
+  }
+  public async unfollow(authToken: AuthToken, userAlias: string): Promise<void> {
+    return new Promise((f) => setTimeout(f, 2000));
+  }
 }
 
 export default FollowService;

@@ -49,13 +49,9 @@ export class UserInfoPresenter extends Presenter<UserInfoView> {
     authToken: AuthToken,
     userAlias: string
   ): Promise<[followerCount: number, followeeCount: number]> {
-    // Pause so we can see the follow message. Remove when connected to the server
-    await new Promise((f) => setTimeout(f, 2000));
+    await this.followService.follow(authToken, userAlias);
 
-    const followerCount = await this.followService.getFollowerCount(authToken, userAlias);
-    const followeeCount = await this.followService.getFolloweeCount(authToken, userAlias);
-
-    return [followerCount, followeeCount];
+    return await this.getUpdatedFollowCounts(authToken, userAlias);
   }
 
   private async unfollow(
@@ -63,8 +59,15 @@ export class UserInfoPresenter extends Presenter<UserInfoView> {
     userAlias: string
   ): Promise<[followerCount: number, followeeCount: number]> {
     // Pause so we can see the unfollow message. Remove when connected to the server
-    await new Promise((f) => setTimeout(f, 2000));
+    await this.followService.unfollow(authToken, userAlias);
 
+    return await this.getUpdatedFollowCounts(authToken, userAlias);
+  }
+
+  private async getUpdatedFollowCounts(
+    authToken: AuthToken,
+    userAlias: string
+  ): Promise<[followerCount: number, followeeCount: number]> {
     const followerCount = await this.followService.getFollowerCount(authToken, userAlias);
     const followeeCount = await this.followService.getFolloweeCount(authToken, userAlias);
 
@@ -100,41 +103,44 @@ export class UserInfoPresenter extends Presenter<UserInfoView> {
   }
 
   public async followUser(authToken: AuthToken, user: User): Promise<void> {
-    var followingUserToast = "";
-
-    try {
-      this.view.setLoading(true);
-      followingUserToast = this.view.displayInfoMessage(`Following ${user.name}...`, 0);
-
-      const [followerCount, followeeCount] = await this.follow(authToken, user.alias);
-
-      this.view.setIsFollower(true);
-      this.view.setFollowerCount(followerCount);
-      this.view.setFolloweeCount(followeeCount);
-    } catch (error) {
-      this.view.displayErrorMessage(`Failed to follow user because of exception: ${error}`);
-    } finally {
-      this.view.deleteMessage(followingUserToast);
-      this.view.setLoading(false);
-    }
+    return await this.updateFollowStatus(authToken, user, "follow");
   }
 
   public async unfollowUser(authToken: AuthToken, user: User): Promise<void> {
-    var unfollowingUserToast = "";
+    return await this.updateFollowStatus(authToken, user, "unfollow");
+  }
+
+  private async updateFollowStatus(
+    authToken: AuthToken,
+    user: User,
+    action: "follow" | "unfollow"
+  ): Promise<void> {
+    const isFollowing = action === "follow";
+    var followStatusToast = "";
 
     try {
       this.view.setLoading(true);
-      unfollowingUserToast = this.view.displayInfoMessage(`Unfollowing ${user.name}...`, 0);
+      followStatusToast = this.view.displayInfoMessage(
+        `${isFollowing ? "Following" : "Unfollowing"} ${user.name}...`,
+        0
+      );
 
-      const [followerCount, followeeCount] = await this.unfollow(authToken!, user.alias);
+      let followerCount: number, followeeCount: number;
+      if (isFollowing) {
+        [followerCount, followeeCount] = await this.follow(authToken, user.alias);
+      } else {
+        [followerCount, followeeCount] = await this.unfollow(authToken, user.alias);
+      }
 
-      this.view.setIsFollower(false);
+      this.view.setIsFollower(isFollowing ? true : false);
       this.view.setFollowerCount(followerCount);
       this.view.setFolloweeCount(followeeCount);
     } catch (error) {
-      this.view.displayErrorMessage(`Failed to unfollow user because of exception: ${error}`);
+      this.view.displayErrorMessage(
+        `Failed to ${isFollowing ? "follow" : "unfollow"} user because of exception: ${error}`
+      );
     } finally {
-      this.view.deleteMessage(unfollowingUserToast);
+      this.view.deleteMessage(followStatusToast);
       this.view.setLoading(false);
     }
   }
