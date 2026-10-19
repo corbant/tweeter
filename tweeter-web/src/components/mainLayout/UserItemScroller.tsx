@@ -1,11 +1,6 @@
-import { useState, useEffect, useRef } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { User } from "tweeter-shared";
-import { useParams } from "react-router-dom";
 import UserItem from "../userItem/UserItem";
-import { useMessageActions } from "../toaster/MessageHooks";
-import { useUserInfo, useUserInfoActions } from "../userInfo/UserInfoHooks";
 import { PagedUserItemPresenter, PagedUserItemView } from "../../presenter/PagedUserItemPresenter";
+import ItemScroller from "./ItemScroller";
 
 interface Props {
   featureUrl: string;
@@ -13,68 +8,11 @@ interface Props {
 }
 
 const UserItemScroller = (props: Props) => {
-  const { displayErrorMessage } = useMessageActions();
-  const [items, setItems] = useState<User[]>([]);
-
-  const addItems = (newItems: User[]) =>
-    setItems((previousItems) => [...previousItems, ...newItems]);
-
-  const { displayedUser, authToken } = useUserInfo();
-  const { setDisplayedUser } = useUserInfoActions();
-  const { displayedUser: displayedUserAliasParam } = useParams();
-
-  const loadMoreItems = () => {
-    return presenterRef.current!.loadMoreItems(authToken!, displayedUser!);
-  };
-
-  const listener: PagedUserItemView = {
-    addItems,
-    displayErrorMessage
-  };
-
-  const presenterRef = useRef<PagedUserItemPresenter | null>(null);
-  if (!presenterRef.current) {
-    presenterRef.current = props.presenterFactory(listener);
-  }
-
-  // Update the displayed user context variable whenever the displayedUser url parameter changes. This allows browser forward and back buttons to work correctly.
-  useEffect(() => {
-    if (authToken && displayedUserAliasParam && displayedUserAliasParam != displayedUser!.alias) {
-      presenterRef.current!.getUser(authToken, displayedUserAliasParam!).then((toUser) => {
-        if (toUser) {
-          setDisplayedUser(toUser);
-        }
-      });
-    }
-  }, [displayedUserAliasParam]);
-
-  // Initialize the component whenever the displayed user changes
-  useEffect(() => {
-    reset();
-    loadMoreItems();
-  }, [displayedUser]);
-
-  const reset = async () => {
-    setItems(() => []);
-    presenterRef.current!.reset();
-  };
-
   return (
-    <div className="container px-0 overflow-visible vh-100">
-      <InfiniteScroll
-        className="pr-0 mr-0"
-        dataLength={items.length}
-        next={loadMoreItems}
-        hasMore={presenterRef.current!.hasMoreItems}
-        loader={<h4>Loading...</h4>}
-      >
-        {items.map((item, index) => (
-          <div key={index} className="row mb-3 mx-0 px-0 border rounded bg-white">
-            <UserItem user={item} featurePath={props.featureUrl} />
-          </div>
-        ))}
-      </InfiniteScroll>
-    </div>
+    <ItemScroller
+      presenterFactory={props.presenterFactory}
+      renderItem={(user) => <UserItem user={user} featurePath={props.featureUrl} />}
+    />
   );
 };
 
