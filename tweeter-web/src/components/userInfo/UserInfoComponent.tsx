@@ -1,9 +1,10 @@
 import "./UserInfoComponent.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useMessageActions } from "../toaster/MessageHooks";
 import { useUserInfo, useUserInfoActions } from "./UserInfoHooks";
 import { UserInfoPresenter, UserInfoView } from "../../presenter/UserInfoPresenter";
+import { usePresenter } from "../../presenter";
 
 const UserInfo = () => {
   const [isFollower, setIsFollower] = useState(false);
@@ -32,13 +33,10 @@ const UserInfo = () => {
     deleteMessage
   };
 
-  const presenterRef = useRef<UserInfoPresenter | null>(null);
-  if (!presenterRef.current) {
-    presenterRef.current = new UserInfoPresenter(listener);
-  }
+  const presenter = usePresenter(() => new UserInfoPresenter(listener));
 
   useEffect(() => {
-    presenterRef.current?.setDisplayedUser(authToken!, currentUser!.alias, displayedUser!.alias);
+    presenter.setDisplayedUser(authToken!, currentUser!.alias, displayedUser!.alias);
   }, [displayedUser]);
 
   const switchToLoggedInUser = (event: React.MouseEvent): void => {
@@ -54,12 +52,12 @@ const UserInfo = () => {
 
   const followDisplayedUser = async (event: React.MouseEvent): Promise<void> => {
     event.preventDefault();
-    presenterRef.current?.followUser(authToken!, displayedUser!);
+    presenter.followUser(authToken!, displayedUser!);
   };
 
   const unfollowDisplayedUser = async (event: React.MouseEvent): Promise<void> => {
     event.preventDefault();
-    presenterRef.current?.unfollowUser(authToken!, displayedUser!);
+    presenter.unfollowUser(authToken!, displayedUser!);
   };
 
   return (

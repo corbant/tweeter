@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useMessageActions } from "../toaster/MessageHooks";
 import { useUserInfo, useUserInfoActions } from "../userInfo/UserInfoHooks";
 import { useParams } from "react-router-dom";
 import { PagedPresenter, PagedView } from "../../presenter/PagedPresenter";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { usePresenter } from "../../presenter";
 
 interface Props<T> {
   presenterFactory: (view: PagedView<T>) => PagedPresenter<T, unknown>;
@@ -20,16 +21,16 @@ function ItemScroller<T>(props: Props<T>) {
 
   const addItems = (newItems: T[]) => setItems((previousItems) => [...previousItems, ...newItems]);
   const loadMoreItems = () => {
-    return presenterRef.current!.loadMoreItems(authToken!, displayedUser!);
+    return presenter.loadMoreItems(authToken!, displayedUser!);
   };
   const reset = async () => {
     setItems(() => []);
-    presenterRef.current!.reset();
+    presenter.reset();
   };
 
   useEffect(() => {
     if (authToken && displayedUserAliasParam && displayedUserAliasParam != displayedUser!.alias) {
-      presenterRef.current!.getUser(authToken!, displayedUserAliasParam!).then((toUser) => {
+      presenter.getUser(authToken!, displayedUserAliasParam!).then((toUser) => {
         if (toUser) {
           setDisplayedUser(toUser);
         }
@@ -46,10 +47,8 @@ function ItemScroller<T>(props: Props<T>) {
     addItems,
     displayErrorMessage
   };
-  const presenterRef = useRef<PagedPresenter<T, unknown> | null>(null);
-  if (!presenterRef.current) {
-    presenterRef.current = props.presenterFactory(listener);
-  }
+
+  const presenter = usePresenter(() => props.presenterFactory(listener));
 
   return (
     <div className="container px-0 overflow-visible vh-100">
@@ -57,7 +56,7 @@ function ItemScroller<T>(props: Props<T>) {
         className="pr-0 mr-0"
         dataLength={items.length}
         next={loadMoreItems}
-        hasMore={presenterRef.current!.hasMoreItems}
+        hasMore={presenter.hasMoreItems}
         loader={<h4>Loading...</h4>}
       >
         {items.map((item, index) => (

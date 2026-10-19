@@ -5,7 +5,7 @@ import Image from "react-bootstrap/Image";
 import { useMessageActions } from "../toaster/MessageHooks";
 import { useUserInfo, useUserInfoActions } from "../userInfo/UserInfoHooks";
 import { AppNavbarPresenter, AppNavbarView } from "../../presenter/AppNavbarPresenter";
-import { useRef } from "react";
+import { usePresenter } from "../../presenter";
 
 const AppNavbar = () => {
   const location = useLocation();
@@ -26,10 +26,7 @@ const AppNavbar = () => {
     logoutSuccess
   };
 
-  const presenterRef = useRef<AppNavbarPresenter | null>(null);
-  if (!presenterRef.current) {
-    presenterRef.current = new AppNavbarPresenter(listener);
-  }
+  const presenter = usePresenter(() => new AppNavbarPresenter(listener));
 
   return (
     <Navbar collapseOnSelect className="mb-4" expand="md" bg="primary" variant="dark">
@@ -94,7 +91,7 @@ const AppNavbar = () => {
             <Nav.Item>
               <NavLink
                 id="logout"
-                onClick={() => presenterRef.current!.logOut(authToken!)}
+                onClick={() => presenter.logOut(authToken!)}
                 to={location.pathname}
                 className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
               >

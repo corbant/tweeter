@@ -1,6 +1,6 @@
 import "./Register.css";
 import "bootstrap/dist/css/bootstrap.css";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthenticationFormLayout from "../AuthenticationFormLayout";
 import { AuthToken, User } from "tweeter-shared";
@@ -8,6 +8,7 @@ import AuthenticationFields from "../AuthenticationFields";
 import { useMessageActions } from "../../toaster/MessageHooks";
 import { useUserInfoActions } from "../../userInfo/UserInfoHooks";
 import { RegisterPresenter, RegisterView } from "../../../presenter/RegisterPresenter";
+import { usePresenter } from "../../../presenter";
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
@@ -38,7 +39,7 @@ const Register = () => {
 
   const registerOnEnter = (event: React.KeyboardEvent<HTMLElement>) => {
     if (event.key == "Enter" && !checkSubmitButtonStatus()) {
-      presenterRef.current!.doRegister(
+      presenter.doRegister(
         firstName,
         lastName,
         alias,
@@ -60,7 +61,7 @@ const Register = () => {
       return;
     }
     try {
-      const imageData = await presenterRef.current!.processImageFile(file);
+      const imageData = await presenter.processImageFile(file);
 
       setImageUrl(URL.createObjectURL(file));
       setImageBytes(imageData.bytes);
@@ -80,10 +81,8 @@ const Register = () => {
     displayErrorMessage,
     registerSuccess
   };
-  const presenterRef = useRef<RegisterPresenter | null>(null);
-  if (!presenterRef.current) {
-    presenterRef.current = new RegisterPresenter(listener);
-  }
+
+  const presenter = usePresenter(() => new RegisterPresenter(listener));
 
   const inputFieldFactory = () => {
     return (
@@ -157,7 +156,7 @@ const Register = () => {
       submitButtonDisabled={checkSubmitButtonStatus}
       isLoading={isLoading}
       submit={() =>
-        presenterRef.current!.doRegister(
+        presenter.doRegister(
           firstName,
           lastName,
           alias,

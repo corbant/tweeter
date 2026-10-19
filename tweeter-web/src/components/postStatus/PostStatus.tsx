@@ -1,9 +1,9 @@
 import "./PostStatus.css";
-import { useRef, useState } from "react";
-import { AuthToken, Status } from "tweeter-shared";
+import { useState } from "react";
 import { useMessageActions } from "../toaster/MessageHooks";
 import { useUserInfo } from "../userInfo/UserInfoHooks";
 import { PostStatusPresenter, PostStatusView } from "../../presenter/PostStatusPresenter";
+import { usePresenter } from "../../presenter";
 
 const PostStatus = () => {
   const { displayInfoMessage, displayErrorMessage, deleteMessage } = useMessageActions();
@@ -24,15 +24,12 @@ const PostStatus = () => {
     deleteMessage
   };
 
-  const presenterRef = useRef<PostStatusPresenter | null>(null);
-  if (!presenterRef.current) {
-    presenterRef.current = new PostStatusPresenter(listener);
-  }
+  const presenter = usePresenter(() => new PostStatusPresenter(listener));
 
   const submitPost = async (event: React.MouseEvent) => {
     event.preventDefault();
 
-    presenterRef.current!.submitPost(authToken!, currentUser!, post);
+    presenter.submitPost(authToken!, currentUser!, post);
   };
 
   const clearPost = (event: React.MouseEvent) => {

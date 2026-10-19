@@ -1,9 +1,9 @@
-import { Link, useNavigate } from "react-router-dom";
-import { AuthToken, FakeData, Status, Type, User } from "tweeter-shared";
+import { useNavigate } from "react-router-dom";
+import { User } from "tweeter-shared";
 import { useMessageActions } from "./components/toaster/MessageHooks";
 import { useUserInfo, useUserInfoActions } from "./components/userInfo/UserInfoHooks";
 import { UserNavigationPresenter, UserNavigationView } from "./presenter/UserNavigationPresenter";
-import { useRef } from "react";
+import { usePresenter } from "./presenter";
 
 export const useUserNavigation = (featurePath: string) => {
   const { displayErrorMessage } = useMessageActions();
@@ -21,15 +21,12 @@ export const useUserNavigation = (featurePath: string) => {
     userFound: onUserFound
   };
 
-  const presenterRef = useRef<UserNavigationPresenter | null>(null);
-  if (!presenterRef.current) {
-    presenterRef.current = new UserNavigationPresenter(listener);
-  }
+  const presenter = usePresenter(() => new UserNavigationPresenter(listener));
 
   const navigateToUser = async (event: React.MouseEvent): Promise<void> => {
     event.preventDefault();
 
-    presenterRef.current?.navigateToUser(authToken!, displayedUser!, event.target.toString());
+    presenter.navigateToUser(authToken!, displayedUser!, event.target.toString());
   };
 
   return {
