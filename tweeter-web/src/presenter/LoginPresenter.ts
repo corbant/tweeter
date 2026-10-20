@@ -1,9 +1,8 @@
 import { AuthToken, User } from "tweeter-shared";
 import UserService from "../model/service/UserService";
-import { Presenter, View } from "./Presenter";
+import { LoadingView, Presenter } from "./Presenter";
 
-export interface LoginView extends View {
-  setLoading(isLoading: boolean): void;
+export interface LoginView extends LoadingView {
   loginSuccess(user: User, authToken: AuthToken, rememberMe: boolean): void;
 }
 

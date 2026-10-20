@@ -1,14 +1,11 @@
 import { AuthToken, User } from "tweeter-shared";
 import FollowService from "../model/service/FollowService";
-import { Presenter, View } from "./Presenter";
+import { LoadingView, MessageView, Presenter } from "./Presenter";
 
-export interface UserInfoView extends View {
-  setLoading: (value: boolean) => void;
+export interface UserInfoView extends MessageView, LoadingView {
   setIsFollower: (value: boolean) => void;
   setFollowerCount: (value: number) => void;
   setFolloweeCount: (value: number) => void;
-  displayInfoMessage: (message: string, duration: number) => string;
-  deleteMessage: (messageId: string) => void;
 }
 
 export class UserInfoPresenter extends Presenter<UserInfoView> {
@@ -58,7 +55,6 @@ export class UserInfoPresenter extends Presenter<UserInfoView> {
     authToken: AuthToken,
     userAlias: string
   ): Promise<[followerCount: number, followeeCount: number]> {
-    // Pause so we can see the unfollow message. Remove when connected to the server
     await this.followService.unfollow(authToken, userAlias);
 
     return await this.getUpdatedFollowCounts(authToken, userAlias);

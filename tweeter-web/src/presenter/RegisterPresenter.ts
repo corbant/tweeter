@@ -1,10 +1,9 @@
 import { Buffer } from "buffer";
 import { AuthToken, User } from "tweeter-shared";
 import UserService from "../model/service/UserService";
-import { Presenter, View } from "./Presenter";
+import { LoadingView, Presenter } from "./Presenter";
 
-export interface RegisterView extends View {
-  setLoading: (value: boolean) => void;
+export interface RegisterView extends LoadingView {
   registerSuccess: (user: User, authToken: AuthToken, rememberMe: boolean) => void;
 }
 
