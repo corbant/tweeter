@@ -2,6 +2,13 @@
   "name": "tweeter-web",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "start": "vite",
+    "build": "tsc && vite build",
+    "serve": "vite preview",
+    "reload": "npm run build && npm run serve",
+    "test": "jest --passWithNoTests"
+  },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-brands-svg-icons": "^6.5.1",
@@ -26,17 +33,12 @@
     "vite-plugin-commonjs": "^0.8.2",
     "web-vitals": "^2.1.4"
   },
-  "scripts": {
-    "start": "vite",
-    "build": "tsc && vite build",
-    "serve": "vite preview",
-    "reload": "npm run build && npm run serve"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^4.5.2",
+    "vite-plugin-svgr": "^3.3.0",
+    "vite-tsconfig-paths": "^4.3.1"
   },
   "browserslist": {
     "production": [
@@ -50,11 +52,25 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "@types/node": "^20.11.24",
-    "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^4.5.2",
-    "vite-plugin-svgr": "^3.3.0",
-    "vite-tsconfig-paths": "^4.3.1"
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "\\.(css|less)$": "<rootDir>/test/__mocks__/styleMock.js"
+    },
+    "testEnvironment": "jsdom",
+    "testMatch": [
+      "<rootDir>/test/**/*.test.tsx",
+      "<rootDir>/test/**/*.test.ts"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest",
+      "\\.js$": "babel-jest"
+    },
+    "verbose": true
   }
 }

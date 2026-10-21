@@ -14,7 +14,7 @@ class UserService {
   ): Promise<[User, AuthToken]> {
     return [FakeData.instance.fakeUsers[0], FakeData.instance.authToken];
   }
-  public async logout(): Promise<void> {
+  public async logout(authToken: AuthToken): Promise<void> {
     await new Promise((res) => setTimeout(res, 1000));
   }
   public async getUserByAlias(authToken: AuthToken, alias: string): Promise<User | null> {

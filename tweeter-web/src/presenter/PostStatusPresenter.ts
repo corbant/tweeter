@@ -7,11 +7,15 @@ export interface PostStatusView extends MessageView, LoadingView {
 }
 
 export class PostStatusPresenter extends Presenter<PostStatusView> {
-  private statusService: StatusService;
+  private _statusService: StatusService;
 
   public constructor(view: PostStatusView) {
     super(view);
-    this.statusService = new StatusService();
+    this._statusService = new StatusService();
+  }
+
+  public get statusService(): StatusService {
+    return this._statusService;
   }
 
   public async submitPost(authToken: AuthToken, currentUser: User, post: string): Promise<void> {
