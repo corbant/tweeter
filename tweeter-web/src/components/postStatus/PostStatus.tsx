@@ -5,7 +5,10 @@ import { useUserInfo } from "../userInfo/UserInfoHooks";
 import { PostStatusPresenter, PostStatusView } from "../../presenter/PostStatusPresenter";
 import { usePresenter } from "../../presenter";
 
-const PostStatus = () => {
+interface Props {
+  presenter?: PostStatusPresenter;
+}
+const PostStatus = (props: Props) => {
   const { displayInfoMessage, displayErrorMessage, deleteMessage } = useMessageActions();
 
   const { currentUser, authToken } = useUserInfo();
@@ -24,7 +27,7 @@ const PostStatus = () => {
     deleteMessage
   };
 
-  const presenter = usePresenter(() => new PostStatusPresenter(listener));
+  const presenter = usePresenter(() => props.presenter ?? new PostStatusPresenter(listener));
 
   const submitPost = async (event: React.MouseEvent) => {
     event.preventDefault();
@@ -47,6 +50,7 @@ const PostStatus = () => {
         <textarea
           className="form-control"
           id="postStatusTextArea"
+          aria-label="status-text"
           rows={10}
           placeholder="What's on your mind?"
           value={post}

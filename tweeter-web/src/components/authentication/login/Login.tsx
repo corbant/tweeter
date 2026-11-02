@@ -12,6 +12,7 @@ import { usePresenter } from "../../../presenter";
 
 interface Props {
   originalUrl?: string;
+  presenter?: LoginPresenter;
 }
 
 const Login = (props: Props) => {
@@ -50,7 +51,7 @@ const Login = (props: Props) => {
     loginSuccess
   };
 
-  const presenter = usePresenter(() => new LoginPresenter(listener));
+  const presenter = usePresenter(() => props.presenter ?? new LoginPresenter(listener));
 
   const inputFieldFactory = () => {
     return (
