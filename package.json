@@ -5,7 +5,8 @@
   "author": "JWilkerson",
   "workspaces": [
     "tweeter-shared",
-    "tweeter-web"
+    "tweeter-web",
+    "tweeter-server"
   ],
   "dependencies": {
     "rimraf": "^5.0.5",
