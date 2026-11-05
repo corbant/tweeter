@@ -6,7 +6,8 @@
   "workspaces": [
     "tweeter-shared",
     "tweeter-web",
-    "tweeter-server"
+    "tweeter-server",
+    "cdk"
   ],
   "dependencies": {
     "rimraf": "^5.0.5",

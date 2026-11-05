@@ -1,0 +1,22 @@
+{
+  "name": "cdk",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.275.0",
+    "constructs": "^10.5.0"
+  },
+  "devDependencies": {
+    "@swc/core": "^1.15.0",
+    "@types/node": "^24.10.1",
+    "aws-cdk": "2.1147.0",
+    "tsx": "^4.23.0",
+    "typescript": "^7.0.2"
+  }
+}
