@@ -5,14 +5,21 @@ import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Architecture, Runtime } from "aws-cdk-lib/aws-lambda";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 
+interface Props extends cdk.StackProps {
+  projectRoot?: string;
+}
+
 export class TweeterServerStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props?: Props) {
     super(scope, id, props);
+
+    const projectRoot = props?.projectRoot;
 
     const getFolloweesLambda = new NodejsFunction(this, "GetFollowees", {
       runtime: Runtime.NODEJS_LATEST,
       entry: path.join(__dirname, "../../tweeter-server/src/lambda/follow/GetFollowees.ts"),
       handler: "handler",
+      projectRoot,
       architecture: Architecture.ARM_64
     });
 
