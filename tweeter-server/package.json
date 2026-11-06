@@ -6,6 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@types/aws-lambda": "^8.10.164",
     "tweeter-shared": "file:../tweeter-shared"
   },
   "devDependencies": {
