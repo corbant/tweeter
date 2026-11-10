@@ -1,21 +1,22 @@
 // All classes that should be avaialble to other modules need to exported here. export * does not work when
 // uploading to lambda. Instead we have to list each export.
 
-//Domain Classes
+// Domain Classes
 export { Follow } from "./model/domain/Follow";
 export { PostSegment, Type } from "./model/domain/PostSegment";
 export { Status } from "./model/domain/Status";
-export { User } from "./model/domain/User";
+export { UserProfile } from "./model/domain/UserProfile";
+export { UserSummary } from "./model/domain/UserSummary";
 export { AuthToken } from "./model/domain/AuthToken";
 
-//DTOs
-export type { UserDto } from "./model/dto/UserDto";
+// Data
+export type { UserSummaryData, UserProfileData } from "./model/api/users";
 
 // Requests
-export type { PagedUserItemRequest } from "./model/net/request/PagedUserItemRequest";
+export { userAliasParamsSchema, type UserAliasParams } from "./model/api/common";
 
-//Responses
-export type { PagedUserItemResponse } from "./model/net/response/PagedUserItemResponse";
-
-//Other
+// Responses
+export { followListResponseSchema, type FollowListResponse } from "./model/api/follows";
+export { errorResponseSchema, type ErrorResponse } from "./model/api/common";
+// Other
 export { FakeData } from "./util/FakeData";

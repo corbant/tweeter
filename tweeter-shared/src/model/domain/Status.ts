@@ -1,14 +1,15 @@
 import { PostSegment, Type } from "./PostSegment";
-import { User } from "./User";
 import { format } from "date-fns";
+import { UserSummary } from "./UserSummary";
+import { StatusData } from "../api/statuses";
 
 export class Status {
   private _post: string;
-  private _user: User;
+  private _user: UserSummary;
   private _timestamp: number;
   private _segments: PostSegment[];
 
-  public constructor(post: string, user: User, timestamp: number) {
+  public constructor(post: string, user: UserSummary, timestamp: number) {
     this._post = post;
     this._user = user;
     this._timestamp = timestamp;
@@ -27,8 +28,8 @@ export class Status {
             post.substring(startIndex, reference.startPostion),
             startIndex,
             reference.startPostion - 1,
-            Type.text,
-          ),
+            Type.text
+          )
         );
       }
 
@@ -39,12 +40,7 @@ export class Status {
 
     if (startIndex < post.length) {
       segments.push(
-        new PostSegment(
-          post.substring(startIndex),
-          startIndex,
-          post.length,
-          Type.text,
-        ),
+        new PostSegment(post.substring(startIndex), startIndex, post.length, Type.text)
       );
     }
 
@@ -55,7 +51,7 @@ export class Status {
     const references = [
       ...Status.parseUrlReferences(post),
       ...Status.parseMentionReferences(post),
-      ...Status.parseNewlines(post),
+      ...Status.parseNewlines(post)
     ];
 
     references.sort((a, b) => {
@@ -71,14 +67,14 @@ export class Status {
       (post: string) => {
         return Status.parseUrls(post);
       },
-      Type.url,
+      Type.url
     );
   }
 
   private static parseReferences(
     post: string,
     parseMethod: (post: string) => string[],
-    type: Type,
+    type: Type
   ): PostSegment[] {
     const references: PostSegment[] = [];
 
@@ -91,9 +87,7 @@ export class Status {
 
       if (startIndex > -1) {
         // Push the reference
-        references.push(
-          new PostSegment(ref, startIndex, startIndex + ref.length, type),
-        );
+        references.push(new PostSegment(ref, startIndex, startIndex + ref.length, type));
 
         // Move start and previous start past the reference
         startIndex = startIndex + ref.length;
@@ -128,7 +122,7 @@ export class Status {
       (post: string) => {
         return Status.parseMentions(post);
       },
-      Type.alias,
+      Type.alias
     );
   }
 
@@ -145,9 +139,7 @@ export class Status {
     let match;
     while ((match = regex.exec(post)) !== null) {
       const matchIndex = match.index;
-      newlines.push(
-        new PostSegment("\n", matchIndex, matchIndex + 1, Type.newline),
-      );
+      newlines.push(new PostSegment("\n", matchIndex, matchIndex + 1, Type.newline));
     }
 
     return newlines;
@@ -161,11 +153,11 @@ export class Status {
     this._post = value;
   }
 
-  public get user(): User {
+  public get user(): UserSummary {
     return this._user;
   }
 
-  public set user(value: User) {
+  public set user(value: UserSummary) {
     this._user = value;
   }
 
@@ -198,35 +190,33 @@ export class Status {
     );
   }
 
-  public static fromJson(json: string | null | undefined): Status | null {
+  public static fromJSON(json: StatusData | null | undefined): Status | null {
     if (!!json) {
-      const jsonObject: {
-        _post: string;
-        _user: {
-          _firstName: string;
-          _lastName: string;
-          _alias: string;
-          _imageUrl: string;
-        };
-        _timestamp: number;
-        _segments: PostSegment[];
-      } = JSON.parse(json);
       return new Status(
-        jsonObject._post,
-        new User(
-          jsonObject._user._firstName,
-          jsonObject._user._lastName,
-          jsonObject._user._alias,
-          jsonObject._user._imageUrl,
+        json.content,
+        new UserSummary(
+          json.author.firstName,
+          json.author.lastName,
+          json.author.alias,
+          json.author.imageUrl
         ),
-        jsonObject._timestamp,
+        json.timestamp
       );
     } else {
       return null;
     }
   }
 
-  public toJson(): string {
-    return JSON.stringify(this);
+  public toJSON(): StatusData {
+    return {
+      content: this._post,
+      author: {
+        firstName: this._user.firstName,
+        lastName: this._user.lastName,
+        alias: this._user.alias,
+        imageUrl: this._user.imageUrl
+      },
+      timestamp: this._timestamp
+    };
   }
 }

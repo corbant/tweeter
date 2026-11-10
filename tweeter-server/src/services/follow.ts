@@ -1,27 +1,21 @@
-import { AuthToken, FakeData, User, UserDto } from "tweeter-shared";
+import { FakeData, UserSummaryData } from "tweeter-shared";
 
 class FollowService {
   public async loadMoreFollowers(
-    token: string,
     userAlias: string,
     limit: number,
-    lastUser: UserDto | null
-  ): Promise<[UserDto[], boolean]> {
-    return this.getFakeData(userAlias, limit, lastUser);
+    cursor: string | null
+  ): Promise<[UserSummaryData[], string | null]> {
+    return this.getFakeData(userAlias, limit, cursor);
   }
   public async loadMoreFollowees(
-    token: string,
     userAlias: string,
     limit: number,
-    lastUser: UserDto | null
-  ): Promise<[UserDto[], boolean]> {
-    return this.getFakeData(userAlias, limit, lastUser);
+    cursor: string | null
+  ): Promise<[UserSummaryData[], string | null]> {
+    return this.getFakeData(userAlias, limit, cursor);
   }
-  public async getIsFollower(
-    token: string,
-    userAlias: string,
-    otherUserAlias: string
-  ): Promise<boolean> {
+  public async getIsFollower(userAlias: string, otherUserAlias: string): Promise<boolean> {
     return FakeData.instance.isFollower();
   }
   public async getFollowerCount(token: string, userAlias: string): Promise<number> {
@@ -40,15 +34,15 @@ class FollowService {
   private async getFakeData(
     userAlias: string,
     limit: number,
-    lastUser: UserDto | null
-  ): Promise<[UserDto[], boolean]> {
-    const [items, hasMore] = FakeData.instance.getPageOfUsers(
-      User.fromDto(lastUser),
-      limit,
-      userAlias
-    );
-    const dtos = items.map((user) => user.dto);
-    return [dtos, hasMore];
+    cursor: string | null
+  ): Promise<[UserSummaryData[], string | null]> {
+    const [items, hasMore] = FakeData.instance.getPageOfUsers(cursor, limit, userAlias);
+    let nextCursor = null;
+    if (hasMore) {
+      nextCursor = items[items.length - 1].alias;
+    }
+    const data = items.map((user) => user.toJSON());
+    return [data, nextCursor];
   }
 }
 

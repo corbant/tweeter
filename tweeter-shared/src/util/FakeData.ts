@@ -1,6 +1,6 @@
 import { AuthToken } from "../model/domain/AuthToken";
 import { Status } from "../model/domain/Status";
-import { User } from "../model/domain/User";
+import { UserProfile } from "../model/domain/UserProfile";
 
 const MALE_IMAGE_URL: string =
   "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png";
@@ -14,33 +14,33 @@ export class FakeData {
     return this._authToken;
   }
 
-  private readonly allUsers: User[] = [
-    new User("Allen", "Anderson", "@allen", MALE_IMAGE_URL),
-    new User("Amy", "Ames", "@amy", FEMALE_IMAGE_URL),
-    new User("Bob", "Bobson", "@bob", MALE_IMAGE_URL),
-    new User("Bonnie", "Beatty", "@bonnie", FEMALE_IMAGE_URL),
-    new User("Chris", "Colston", "@chris", MALE_IMAGE_URL),
-    new User("Cindy", "Coats", "@cindy", FEMALE_IMAGE_URL),
-    new User("Dan", "Donaldson", "@dan", MALE_IMAGE_URL),
-    new User("Dee", "Dempsey", "@dee", FEMALE_IMAGE_URL),
-    new User("Elliott", "Enderson", "@elliott", MALE_IMAGE_URL),
-    new User("Elizabeth", "Engle", "@elizabeth", FEMALE_IMAGE_URL),
-    new User("Frank", "Frandson", "@frank", MALE_IMAGE_URL),
-    new User("Fran", "Franklin", "@fran", FEMALE_IMAGE_URL),
-    new User("Gary", "Gilbert", "@gary", MALE_IMAGE_URL),
-    new User("Giovanna", "Giles", "@giovanna", FEMALE_IMAGE_URL),
-    new User("Henry", "Henderson", "@henry", MALE_IMAGE_URL),
-    new User("Helen", "Hopwell", "@helen", FEMALE_IMAGE_URL),
-    new User("Igor", "Isaacson", "@igor", MALE_IMAGE_URL),
-    new User("Isabel", "Isaacson", "@isabel", FEMALE_IMAGE_URL),
-    new User("Justin", "Jones", "@justin", MALE_IMAGE_URL),
-    new User("Jill", "Johnson", "@jill", FEMALE_IMAGE_URL),
-    new User("Kent", "Knudson", "@kent", MALE_IMAGE_URL),
-    new User("Kathy", "Kunzler", "@kathy", FEMALE_IMAGE_URL),
+  private readonly allUsers: UserProfile[] = [
+    new UserProfile("Allen", "Anderson", "@allen", MALE_IMAGE_URL, 0, 0),
+    new UserProfile("Amy", "Ames", "@amy", FEMALE_IMAGE_URL, 0, 0),
+    new UserProfile("Bob", "Bobson", "@bob", MALE_IMAGE_URL, 0, 0),
+    new UserProfile("Bonnie", "Beatty", "@bonnie", FEMALE_IMAGE_URL, 0, 0),
+    new UserProfile("Chris", "Colston", "@chris", MALE_IMAGE_URL, 0, 0),
+    new UserProfile("Cindy", "Coats", "@cindy", FEMALE_IMAGE_URL, 0, 0),
+    new UserProfile("Dan", "Donaldson", "@dan", MALE_IMAGE_URL, 0, 0),
+    new UserProfile("Dee", "Dempsey", "@dee", FEMALE_IMAGE_URL, 0, 0),
+    new UserProfile("Elliott", "Enderson", "@elliott", MALE_IMAGE_URL, 0, 0),
+    new UserProfile("Elizabeth", "Engle", "@elizabeth", FEMALE_IMAGE_URL, 0, 0),
+    new UserProfile("Frank", "Frandson", "@frank", MALE_IMAGE_URL, 0, 0),
+    new UserProfile("Fran", "Franklin", "@fran", FEMALE_IMAGE_URL, 0, 0),
+    new UserProfile("Gary", "Gilbert", "@gary", MALE_IMAGE_URL, 0, 0),
+    new UserProfile("Giovanna", "Giles", "@giovanna", FEMALE_IMAGE_URL, 0, 0),
+    new UserProfile("Henry", "Henderson", "@henry", MALE_IMAGE_URL, 0, 0),
+    new UserProfile("Helen", "Hopwell", "@helen", FEMALE_IMAGE_URL, 0, 0),
+    new UserProfile("Igor", "Isaacson", "@igor", MALE_IMAGE_URL, 0, 0),
+    new UserProfile("Isabel", "Isaacson", "@isabel", FEMALE_IMAGE_URL, 0, 0),
+    new UserProfile("Justin", "Jones", "@justin", MALE_IMAGE_URL, 0, 0),
+    new UserProfile("Jill", "Johnson", "@jill", FEMALE_IMAGE_URL, 0, 0),
+    new UserProfile("Kent", "Knudson", "@kent", MALE_IMAGE_URL, 0, 0),
+    new UserProfile("Kathy", "Kunzler", "@kathy", FEMALE_IMAGE_URL, 0, 0)
   ];
 
   // Allows mocking of fake users
-  public get fakeUsers(): User[] {
+  public get fakeUsers(): UserProfile[] {
     return this.allUsers;
   }
 
@@ -53,7 +53,7 @@ export class FakeData {
 
   // Used to force statuses to be re-generated if test cases use
   // different sets of fake users (by mocking the fakeUsers method).
-  private fakeUsersUsedToGenerateStatuses: User[] = [];
+  private fakeUsersUsedToGenerateStatuses: UserProfile[] = [];
 
   private static _instance: FakeData;
 
@@ -72,9 +72,7 @@ export class FakeData {
     // eslint-disable-next-line no-self-compare
     if (this.fakeUsers !== this.fakeUsers) {
       // Verify that this.fakeUsers always returns the same list of users (this could be violated by mock implementations of fakeUsers)
-      throw new Error(
-        "fakeUsers should return the same list of fake users each time it's called"
-      );
+      throw new Error("fakeUsers should return the same list of fake users each time it's called");
     }
 
     if (this.fakeUsers !== this.fakeUsersUsedToGenerateStatuses) {
@@ -99,16 +97,12 @@ export class FakeData {
     for (let i = 0; i < 2; i++) {
       for (let j = 0; j < this.fakeUsers.length; j++) {
         const sender = this.fakeUsers[j];
-        const mention =
-          j < this.fakeUsers.length - 1
-            ? this.fakeUsers[j + 1]
-            : this.fakeUsers[0];
+        const mention = j < this.fakeUsers.length - 1 ? this.fakeUsers[j + 1] : this.fakeUsers[0];
 
         const post = `Post ${i} ${j}
         My friend ${mention.alias} likes this website: http://byu.edu. Do you? 
         Or do you prefer this one: http://cs.byu.edu?`;
-        const timestamp =
-          timestampStart + 30000000000 * (i * this.fakeUsers.length + j);
+        const timestamp = timestampStart + 30000000000 * (i * this.fakeUsers.length + j);
         const status = new Status(post, sender, timestamp);
         this.allStatuses.push(status);
       }
@@ -120,14 +114,14 @@ export class FakeData {
   /**
    * Returns the first fake user, or null if there are no fake users.
    */
-  public get firstUser(): User | null {
+  public get firstUser(): UserProfile | null {
     return this.fakeUsers.length > 0 ? this.fakeUsers[0] : null;
   }
 
   /**
    * Returns the second fake user, or null if there are not at least two fake users.
    */
-  public get secondUser(): User | null {
+  public get secondUser(): UserProfile | null {
     return this.fakeUsers.length > 1 ? this.fakeUsers[1] : null;
   }
 
@@ -137,7 +131,7 @@ export class FakeData {
    * @param alias the alias of the user to be returned.
    * @returns the user or null if no user is found with the specified alias.
    */
-  public findUserByAlias(alias: string): User | null {
+  public findUserByAlias(alias: string): UserProfile | null {
     for (let user of this.fakeUsers) {
       if (user.alias === alias) {
         return user;
@@ -163,23 +157,23 @@ export class FakeData {
    * @returns a tuple containing a page of users and a "hasMorePages" flag.
    */
   public getPageOfUsers(
-    lastUser: User | null,
+    lastUser: string | null,
     limit: number,
     omit: string | null
-  ): [User[], boolean] {
+  ): [UserProfile[], boolean] {
     let userIndex = 0;
 
     // Find the index of the first user to be returned
     if (lastUser != null) {
       for (let i = 0; i < this.fakeUsers.length; i++) {
-        if (this.fakeUsers[i].equals(lastUser)) {
+        if (this.fakeUsers[i].alias === lastUser) {
           userIndex = i + 1;
           break;
         }
       }
     }
 
-    const fakeUsersToReturn: User[] = [];
+    const fakeUsersToReturn: UserProfile[] = [];
     let count = 0;
     while (userIndex < this.fakeUsers.length && count < limit) {
       const currentUser = this.fakeUsers[userIndex];
@@ -202,10 +196,7 @@ export class FakeData {
    * @param limit - maximum number of statuses to return (i.e., page size).
    * @returns a tuple containing a page of statuses and a "hasMorePages" flag.
    */
-  public getPageOfStatuses(
-    lastStatus: Status | null,
-    limit: number
-  ): [Status[], boolean] {
+  public getPageOfStatuses(lastStatus: Status | null, limit: number): [Status[], boolean] {
     let statusIndex = 0;
 
     // Find the index of the first status to be returned
@@ -235,13 +226,13 @@ export class FakeData {
    * Returns a followers count for the user, as a random number between 1 and 10.
    */
   public getFollowerCount(userAlias: string): number | PromiseLike<number> {
-    return Math.floor(Math.random() * 10) + 1
+    return Math.floor(Math.random() * 10) + 1;
   }
 
   /**
    * Returns a followees count for the user, as a random number between 1 and 10.
    */
   public getFolloweeCount(userAlias: string): number | PromiseLike<number> {
-    return Math.floor(Math.random() * 10) + 1
+    return Math.floor(Math.random() * 10) + 1;
   }
 }

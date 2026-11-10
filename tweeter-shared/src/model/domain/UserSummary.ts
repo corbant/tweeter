@@ -1,6 +1,5 @@
-import { UserDto } from "../dto/UserDto";
-
-export class User {
+import { UserSummaryData } from "../api/users";
+export class UserSummary {
   private _firstName: string;
   private _lastName: string;
   private _alias: string;
@@ -49,42 +48,7 @@ export class User {
     this._imageUrl = value;
   }
 
-  public equals(other: User): boolean {
+  public equals(other: UserSummary): boolean {
     return this._alias === other._alias;
-  }
-
-  public static fromJson(json: string | null | undefined): User | null {
-    if (!!json) {
-      const jsonObject: {
-        _firstName: string;
-        _lastName: string;
-        _alias: string;
-        _imageUrl: string;
-      } = JSON.parse(json);
-      return new User(
-        jsonObject._firstName,
-        jsonObject._lastName,
-        jsonObject._alias,
-        jsonObject._imageUrl
-      );
-    } else {
-      return null;
-    }
-  }
-
-  public toJson(): string {
-    return JSON.stringify(this);
-  }
-
-  public get dto(): UserDto {
-    return {
-      firstName: this.firstName,
-      lastName: this.lastName,
-      alias: this.alias,
-      imageUrl: this.imageUrl
-    };
-  }
-  public static fromDto(dto: UserDto | null): User | null {
-    return dto == null ? null : new User(dto.firstName, dto.lastName, dto.alias, dto.imageUrl);
   }
 }
