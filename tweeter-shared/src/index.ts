@@ -14,9 +14,16 @@ export type { UserSummaryData, UserProfileData } from "./model/api/users";
 
 // Requests
 export { userAliasParamsSchema, type UserAliasParams } from "./model/api/common";
+export {
+  loginRequestSchema,
+  type LoginRequest,
+  registerRequestSchema,
+  type RegisterRequest
+} from "./model/api/auth";
 
 // Responses
 export { followListResponseSchema, type FollowListResponse } from "./model/api/follows";
 export { errorResponseSchema, type ErrorResponse } from "./model/api/common";
+export { authResponseSchema, type AuthResponse } from "./model/api/auth";
 // Other
 export { FakeData } from "./util/FakeData";

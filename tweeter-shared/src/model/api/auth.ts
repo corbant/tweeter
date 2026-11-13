@@ -1,5 +1,6 @@
 import * as z from "@zod/mini";
 import { aliasSchema } from "./common";
+import { userProfile } from "./users";
 
 export const registerRequestSchema = z.object({
   alias: aliasSchema,
@@ -19,7 +20,10 @@ export const authTokenSchema = z.object({
   timestamp: z.number().check(z.int(), z.nonnegative())
 });
 
-export const authResponseSchema = authTokenSchema;
+export const authResponseSchema = z.object({
+  authToken: authTokenSchema,
+  user: userProfile
+});
 
 export type AuthTokenData = z.infer<typeof authTokenSchema>;
 export type RegisterRequest = z.infer<typeof registerRequestSchema>;
