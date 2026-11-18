@@ -13,7 +13,7 @@ export class ClientCommunicator {
     endpoint: string,
     method: string,
     headers?: Headers
-  ): Promise<RES | ErrorResponse | null> {
+  ): Promise<RES> {
     if (headers && req) {
       headers.append("Content-Type", "application/json");
     } else if (req) {
@@ -50,7 +50,7 @@ export class ClientCommunicator {
     }
 
     if (!responseText) {
-      return null;
+      return undefined as RES;
     }
 
     return JSON.parse(responseText) as RES;
