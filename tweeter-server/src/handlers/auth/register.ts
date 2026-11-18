@@ -2,7 +2,6 @@ import {
   type ErrorResponse,
   authResponseSchema,
   AuthResponse,
-  loginRequestSchema,
   registerRequestSchema
 } from "tweeter-shared";
 import { APIGatewayProxyEventV2 } from "aws-lambda";
@@ -28,7 +27,7 @@ export const handler: APIGatewayProxyHandlerV2<AuthResponse | ErrorResponse> = a
 
   const userService = new UserService();
 
-  const [authToken, user] = await userService.register(
+  const [user, authToken] = await userService.register(
     firstName,
     lastName,
     alias,

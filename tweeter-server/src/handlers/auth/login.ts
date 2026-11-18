@@ -27,7 +27,7 @@ export const handler: APIGatewayProxyHandlerV2<AuthResponse | ErrorResponse> = a
 
   const userService = new UserService();
 
-  const [authToken, user] = await userService.login(alias, password);
+  const [user, authToken] = await userService.login(alias, password);
 
   const result = {
     authToken,

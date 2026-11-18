@@ -1,4 +1,3 @@
-import { AuthToken } from "../model/domain/AuthToken";
 import { Status } from "../model/domain/Status";
 import { UserProfile } from "../model/domain/UserProfile";
 
@@ -8,12 +7,6 @@ const FEMALE_IMAGE_URL: string =
   "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/daisy_duck.png";
 
 export class FakeData {
-  private readonly _authToken: AuthToken = AuthToken.Generate();
-
-  public get authToken() {
-    return this._authToken;
-  }
-
   private readonly allUsers: UserProfile[] = [
     new UserProfile("Allen", "Anderson", "@allen", MALE_IMAGE_URL, 0, 0),
     new UserProfile("Amy", "Ames", "@amy", FEMALE_IMAGE_URL, 0, 0),

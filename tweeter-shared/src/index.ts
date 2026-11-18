@@ -7,10 +7,10 @@ export { PostSegment, Type } from "./model/domain/PostSegment";
 export { Status } from "./model/domain/Status";
 export { UserProfile } from "./model/domain/UserProfile";
 export { UserSummary } from "./model/domain/UserSummary";
-export { AuthToken } from "./model/domain/AuthToken";
 
 // Data
 export type { UserSummaryData, UserProfileData } from "./model/api/users";
+export type { AuthTokenData } from "./model/api/auth";
 
 // Requests
 export { userAliasParamsSchema, type UserAliasParams } from "./model/api/common";
