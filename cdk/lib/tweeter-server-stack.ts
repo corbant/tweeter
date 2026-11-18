@@ -139,8 +139,13 @@ export class TweeterServerStack extends cdk.Stack {
 
     const httpApi = new apigateway.HttpApi(this, "TweeterApi", {
       corsPreflight: {
-        allowHeaders: ["Authorization"],
-        allowMethods: [apigateway.CorsHttpMethod.GET],
+        allowHeaders: ["Authorization", "Content-Type"],
+        allowMethods: [
+          apigateway.CorsHttpMethod.GET,
+          apigateway.CorsHttpMethod.POST,
+          apigateway.CorsHttpMethod.PUT,
+          apigateway.CorsHttpMethod.DELETE
+        ],
         allowOrigins: ["*"],
         maxAge: cdk.Duration.days(10)
       },
