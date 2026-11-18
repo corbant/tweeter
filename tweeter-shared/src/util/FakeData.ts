@@ -127,7 +127,15 @@ export class FakeData {
   public findUserByAlias(alias: string): UserProfile | null {
     for (let user of this.fakeUsers) {
       if (user.alias === alias) {
-        return user;
+        const newUser = new UserProfile(
+          user.firstName,
+          user.lastName,
+          user.alias,
+          user.imageUrl,
+          this.getFollowerCount(user.alias),
+          this.getFolloweeCount(user.alias)
+        );
+        return newUser;
       }
     }
 
@@ -228,14 +236,14 @@ export class FakeData {
   /**
    * Returns a followers count for the user, as a random number between 1 and 10.
    */
-  public getFollowerCount(userAlias: string): number | PromiseLike<number> {
+  public getFollowerCount(userAlias: string): number {
     return Math.floor(Math.random() * 10) + 1;
   }
 
   /**
    * Returns a followees count for the user, as a random number between 1 and 10.
    */
-  public getFolloweeCount(userAlias: string): number | PromiseLike<number> {
+  public getFolloweeCount(userAlias: string): number {
     return Math.floor(Math.random() * 10) + 1;
   }
 }

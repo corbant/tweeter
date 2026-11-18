@@ -18,12 +18,6 @@ class FollowService {
   public async getIsFollower(userAlias: string, otherUserAlias: string): Promise<boolean> {
     return FakeData.instance.isFollower();
   }
-  public async getFollowerCount(token: string, userAlias: string): Promise<number> {
-    return FakeData.instance.getFollowerCount(userAlias);
-  }
-  public async getFolloweeCount(token: string, userAlias: string): Promise<number> {
-    return FakeData.instance.getFolloweeCount(userAlias);
-  }
   public async follow(token: string, userAlias: string): Promise<void> {
     return new Promise((f) => setTimeout(f, 2000));
   }
