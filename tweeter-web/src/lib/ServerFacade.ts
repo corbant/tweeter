@@ -1,12 +1,17 @@
 import {
+  AuthResponse,
   CreateStatusRequest,
   FollowListResponse,
   IsFollowingResponse,
+  LoginRequest,
+  RegisterRequest,
   Status,
   StatusListResponse,
+  UserProfile,
   UserSummary
 } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
+import { AuthStorage } from "./AuthStorage";
 
 export class ServerFacade {
   private SERVER_URL = "";
@@ -154,5 +159,54 @@ export class ServerFacade {
       url.toString(),
       "POST"
     );
+  }
+
+  public async login(alias: string, password: string): Promise<UserProfile> {
+    const url = new URL(`/auth/login`);
+    const response = await this.clientCommunicator.doRequest<LoginRequest, AuthResponse>(
+      {
+        alias,
+        password
+      },
+      url.toString(),
+      "POST"
+    );
+    AuthStorage.setToken(response.authToken.token);
+    const user = UserProfile.fromJSON(response.user)!;
+    return user;
+  }
+
+  public async register(
+    alias: string,
+    firstName: string,
+    lastName: string,
+    password: string,
+    imageKey: string
+  ): Promise<UserProfile> {
+    const url = new URL(`/auth/register`);
+    const response = await this.clientCommunicator.doRequest<RegisterRequest, AuthResponse>(
+      {
+        alias,
+        firstName,
+        lastName,
+        password,
+        imageKey
+      },
+      url.toString(),
+      "POST"
+    );
+    AuthStorage.setToken(response.authToken.token);
+    const user = UserProfile.fromJSON(response.user)!;
+    return user;
+  }
+
+  public async logout(): Promise<void> {
+    const url = new URL(`/auth/logout`);
+    await this.clientCommunicator.doRequest<undefined, undefined>(
+      undefined,
+      url.toString(),
+      "POST"
+    );
+    AuthStorage.clearToken();
   }
 }
