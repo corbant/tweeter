@@ -16,6 +16,14 @@ export class TweeterServerStack extends cdk.Stack {
 
     const projectRoot = props?.projectRoot;
 
+    const getProfileLambda = new NodejsFunction(this, "ProfileLambda", {
+      runtime: Runtime.NODEJS_LATEST,
+      entry: path.join(__dirname, "../../tweeter-server/src/handlers/users/getProfile.ts"),
+      handler: "handler",
+      projectRoot,
+      architecture: Architecture.ARM_64
+    });
+
     const getFolloweesLambda = new NodejsFunction(this, "FolloweesLambda", {
       runtime: Runtime.NODEJS_LATEST,
       entry: path.join(__dirname, "../../tweeter-server/src/handlers/follows/listFollowees.ts"),
@@ -66,6 +74,11 @@ export class TweeterServerStack extends cdk.Stack {
     });
 
     // GET /users/{alias}
+    const getProfileRoute = httpApi.addRoutes({
+      path: "/users/{alias}/followers",
+      methods: [apigateway.HttpMethod.GET],
+      integration: new HttpLambdaIntegration("ProfileLambdaIntegration", getProfileLambda)
+    });
     // GET /users/{alias}/followers
     const getFollowersRoute = httpApi.addRoutes({
       path: "/users/{alias}/followers",

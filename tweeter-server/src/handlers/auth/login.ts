@@ -16,6 +16,9 @@ export const handler: APIGatewayProxyHandlerV2<AuthResponse | ErrorResponse> = a
   if (!bodyResult.success) {
     return {
       statusCode: 400,
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({ error: "Invalid body", issues: bodyResult.error?.issues })
     };
   }

@@ -16,10 +16,7 @@ class UserService {
   public async logout(): Promise<void> {
     await new Promise((res) => setTimeout(res, 1000));
   }
-  public async getUserByAlias(
-    authToken: AuthToken,
-    alias: string
-  ): Promise<UserProfileData | null> {
+  public async getUserByAlias(alias: string): Promise<UserProfileData | null> {
     const user = FakeData.instance.findUserByAlias(alias);
     return user ? user.toJSON() : null;
   }

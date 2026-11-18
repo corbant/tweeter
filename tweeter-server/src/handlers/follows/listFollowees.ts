@@ -17,6 +17,9 @@ export const handler: APIGatewayProxyHandlerV2<FollowListResponse | ErrorRespons
   if (!pathResult.success) {
     return {
       statusCode: 400,
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({ error: "Invalid path parameters", issues: pathResult.error?.issues })
     };
   }

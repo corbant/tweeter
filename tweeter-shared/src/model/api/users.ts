@@ -18,4 +18,4 @@ export const userProfileResponseSchema = userProfile;
 export type UserSummaryData = z.infer<typeof userSummary>;
 export type UserProfileData = z.infer<typeof userProfile>;
 
-export type UserResponse = z.infer<typeof userProfileResponseSchema>;
+export type UserProfileResponse = z.infer<typeof userProfileResponseSchema>;
