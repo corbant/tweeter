@@ -5,7 +5,7 @@ import "@testing-library/jest-dom";
 import { instance, mock, verify } from "@typestrong/ts-mockito";
 import PostStatus from "../../../src/components/postStatus/PostStatus";
 import { PostStatusPresenter } from "../../../src/presenter/PostStatusPresenter";
-import { AuthToken, User } from "tweeter-shared";
+import { UserProfile } from "tweeter-shared";
 import { useUserInfo } from "../../../src/components/userInfo/UserInfoHooks";
 
 jest.mock("../../../src/components/userInfo/UserInfoHooks", () => ({
@@ -14,14 +14,19 @@ jest.mock("../../../src/components/userInfo/UserInfoHooks", () => ({
   useUserInfo: jest.fn()
 }));
 
-const mockUserInstance = new User("test", "test", "@test", "https://test.com");
-const mockAuthTokenInstance = new AuthToken("test", 1234567);
+const mockUserInstance = new UserProfile(
+  "test",
+  "test",
+  "@test",
+  "https://test.com",
+  0,
+  0
+);
 
 describe("PostStatus component", () => {
   beforeAll(() => {
     (useUserInfo as jest.Mock).mockReturnValue({
-      currentUser: mockUserInstance,
-      authToken: mockAuthTokenInstance
+      currentUser: mockUserInstance
     });
   });
   it("On initial render, Post Status and Clear buttons are both disabled", () => {
@@ -60,7 +65,7 @@ describe("PostStatus component", () => {
     user.type(statusTextField, post);
     user.click(postStatusButton);
 
-    verify(mockPresenter.submitPost(mockAuthTokenInstance, mockUserInstance, post)).once();
+    verify(mockPresenter.submitPost(post)).once();
   });
 });
 
