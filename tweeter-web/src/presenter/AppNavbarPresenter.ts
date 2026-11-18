@@ -1,6 +1,6 @@
-import { AuthToken } from "tweeter-shared";
-import UserService from "../../../tweeter-server/src/services/user";
+import UserService from "../model/service/UserService";
 import { MessageView, Presenter } from "./Presenter";
+import { ServerFacade } from "../lib/ServerFacade";
 
 export interface AppNavbarView extends MessageView {
   logoutSuccess: () => void;
@@ -9,20 +9,20 @@ export interface AppNavbarView extends MessageView {
 export class AppNavbarPresenter extends Presenter<AppNavbarView> {
   private _userService: UserService;
 
-  public constructor(view: AppNavbarView) {
+  public constructor(view: AppNavbarView, facade: ServerFacade) {
     super(view);
-    this._userService = new UserService();
+    this._userService = new UserService(facade);
   }
 
   public get userService(): UserService {
     return this._userService;
   }
 
-  public async logOut(authToken: AuthToken) {
+  public async logOut() {
     const loggingOutToastId = this.view.displayInfoMessage("Logging Out...", 0);
 
     try {
-      await this.logout(authToken!);
+      await this.logout();
 
       this.view.deleteMessage(loggingOutToastId);
       this.view.logoutSuccess();
@@ -31,8 +31,8 @@ export class AppNavbarPresenter extends Presenter<AppNavbarView> {
     }
   }
 
-  private async logout(authToken: AuthToken) {
+  private async logout() {
     // Pause so we can see the logging out message. Delete when the call to the server is implemented.
-    this.userService.logout(authToken);
+    this.userService.logout();
   }
 }

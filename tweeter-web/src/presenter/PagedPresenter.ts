@@ -1,6 +1,6 @@
 import { AuthToken, User } from "tweeter-shared";
 import { Presenter, View } from "./Presenter";
-import UserService from "../../../tweeter-server/src/services/user";
+import UserService from "../model/service/UserService";
 
 export interface PagedView<T> extends View {
   addItems: (items: T[]) => void;

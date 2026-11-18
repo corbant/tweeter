@@ -16,7 +16,6 @@ import { AuthStorage } from "./AuthStorage";
 
 export class ServerFacade {
   private SERVER_URL = "";
-  private LIMIT = 10;
 
   private clientCommunicator = new ClientCommunicator(this.SERVER_URL);
 
@@ -33,10 +32,11 @@ export class ServerFacade {
 
   public async getMoreFollowees(
     alias: string,
-    cursor: string | undefined
+    limit: number,
+    cursor: string | null
   ): Promise<[UserSummary[], string | null]> {
     const url = new URL(`/users/${alias}/followees`);
-    url.searchParams.set("limit", this.LIMIT.toString());
+    url.searchParams.set("limit", limit.toString());
     if (cursor) {
       url.searchParams.set("cursor", cursor);
     }
@@ -59,10 +59,11 @@ export class ServerFacade {
 
   public async getMoreFollowers(
     alias: string,
-    cursor: string | undefined
+    limit: number,
+    cursor: string | null
   ): Promise<[UserSummary[], string | null]> {
     const url = new URL(`/users/${alias}/followers`);
-    url.searchParams.set("limit", this.LIMIT.toString());
+    url.searchParams.set("limit", limit.toString());
     if (cursor) {
       url.searchParams.set("cursor", cursor);
     }
@@ -112,10 +113,11 @@ export class ServerFacade {
 
   public async loadFeed(
     alias: string,
-    cursor: string | undefined
+    limit: number,
+    cursor: string | null
   ): Promise<[Status[], string | null]> {
     const url = new URL(`/users/${alias}/feed`);
-    url.searchParams.set("limit", this.LIMIT.toString());
+    url.searchParams.set("limit", limit.toString());
     if (cursor) {
       url.searchParams.set("cursor", cursor);
     }
@@ -138,10 +140,11 @@ export class ServerFacade {
 
   public async loadStory(
     alias: string,
-    cursor: string | undefined
+    limit: number,
+    cursor: string | null
   ): Promise<[Status[], string | null]> {
     const url = new URL(`/users/${alias}/story`);
-    url.searchParams.set("limit", this.LIMIT.toString());
+    url.searchParams.set("limit", limit.toString());
     if (cursor) {
       url.searchParams.set("cursor", cursor);
     }

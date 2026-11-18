@@ -1,6 +1,6 @@
 import { Buffer } from "buffer";
 import { AuthToken, User } from "tweeter-shared";
-import UserService from "../../../tweeter-server/src/services/user";
+import UserService from "../model/service/UserService";
 import { LoadingView, Presenter } from "./Presenter";
 
 export interface RegisterView extends LoadingView {
