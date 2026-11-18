@@ -33,7 +33,7 @@ export class UserNavigationPresenter extends Presenter<UserNavigationView> {
 
   private extractAlias(value: string): string {
     const index = value.indexOf("@");
-    return value.substring(index + 1);
+    return value.substring(index);
   }
 
   private async getUser(alias: string): Promise<UserProfile | null> {
