@@ -51,4 +51,21 @@ export class UserSummary {
   public equals(other: UserSummary): boolean {
     return this._alias === other._alias;
   }
+
+  public static fromJSON(json: UserSummaryData | null | undefined): UserSummary | null {
+    if (!!json) {
+      return new UserSummary(json.firstName, json.lastName, json.alias, json.imageUrl);
+    } else {
+      return null;
+    }
+  }
+
+  public toJSON(): UserSummaryData {
+    return {
+      firstName: this.firstName,
+      lastName: this.lastName,
+      alias: this.alias,
+      imageUrl: this.imageUrl
+    };
+  }
 }
