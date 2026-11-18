@@ -1,18 +1,17 @@
 import { Context, createContext } from "react";
-import { User, AuthToken } from "tweeter-shared";
+import { UserProfile } from "tweeter-shared";
 import { UserInfo } from "./UserInfo";
 
 export const UserInfoContext = createContext<UserInfo>({} as UserInfo);
 
 interface UserInfoActions {
   updateUserInfo: (
-    currentUser: User,
-    displayedUser: User | null,
-    authToken: AuthToken,
+    currentUser: UserProfile,
+    displayedUser: UserProfile | null,
     remember: boolean
   ) => void;
   clearUserInfo: () => void;
-  setDisplayedUser: (user: User) => void;
+  setDisplayedUser: (user: UserProfile) => void;
 }
 
 const defaultUserInfoActions: UserInfoActions = {

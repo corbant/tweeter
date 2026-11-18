@@ -14,7 +14,7 @@ const UserInfo = () => {
 
   const { displayInfoMessage, displayErrorMessage, deleteMessage } = useMessageActions();
 
-  const { currentUser, authToken, displayedUser } = useUserInfo();
+  const { currentUser, displayedUser } = useUserInfo();
   const { setDisplayedUser } = useUserInfoActions();
   const navigate = useNavigate();
   const location = useLocation();
@@ -36,7 +36,7 @@ const UserInfo = () => {
   const presenter = usePresenter(() => new UserInfoPresenter(listener));
 
   useEffect(() => {
-    presenter.setDisplayedUser(authToken!, currentUser!.alias, displayedUser!.alias);
+    presenter.setDisplayedUser(currentUser!.alias, displayedUser!.alias);
   }, [displayedUser]);
 
   const switchToLoggedInUser = (event: React.MouseEvent): void => {
@@ -52,17 +52,17 @@ const UserInfo = () => {
 
   const followDisplayedUser = async (event: React.MouseEvent): Promise<void> => {
     event.preventDefault();
-    presenter.followUser(authToken!, displayedUser!);
+    presenter.followUser(displayedUser!);
   };
 
   const unfollowDisplayedUser = async (event: React.MouseEvent): Promise<void> => {
     event.preventDefault();
-    presenter.unfollowUser(authToken!, displayedUser!);
+    presenter.unfollowUser(displayedUser!);
   };
 
   return (
     <>
-      {currentUser === null || displayedUser === null || authToken === null ? (
+      {currentUser === null || displayedUser === null ? (
         <></>
       ) : (
         <div className="container">

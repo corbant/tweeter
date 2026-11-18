@@ -1,9 +1,9 @@
-import { User } from "tweeter-shared";
+import { UserSummary } from "tweeter-shared";
 import { useUserNavigation } from "../../userNavigation";
 import { Link } from "react-router-dom";
 
 interface Props {
-  user: User;
+  user: UserSummary;
   featurePath: string;
   children?: React.ReactNode;
 }

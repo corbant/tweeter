@@ -15,10 +15,10 @@ import { FeedPresenter } from "./presenter/FeedPresenter";
 import { StoryPresenter } from "./presenter/StoryPresenter";
 
 const App = () => {
-  const { currentUser, authToken } = useUserInfo();
+  const { currentUser } = useUserInfo();
 
   const isAuthenticated = (): boolean => {
-    return !!currentUser && !!authToken;
+    return !!currentUser;
   };
 
   return (

@@ -11,7 +11,7 @@ interface Props {
 const PostStatus = (props: Props) => {
   const { displayInfoMessage, displayErrorMessage, deleteMessage } = useMessageActions();
 
-  const { currentUser, authToken } = useUserInfo();
+  const { currentUser } = useUserInfo();
   const [post, setPost] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -32,7 +32,7 @@ const PostStatus = (props: Props) => {
   const submitPost = async (event: React.MouseEvent) => {
     event.preventDefault();
 
-    presenter.submitPost(authToken!, currentUser!, post);
+    presenter.submitPost(post);
   };
 
   const clearPost = (event: React.MouseEvent) => {
@@ -41,7 +41,7 @@ const PostStatus = (props: Props) => {
   };
 
   const checkButtonStatus: () => boolean = () => {
-    return !post.trim() || !authToken || !currentUser || isLoading;
+    return !post.trim() || !currentUser || isLoading;
   };
 
   return (

@@ -1,8 +1,8 @@
-import { User } from "tweeter-shared";
+import { UserSummary } from "tweeter-shared";
 import UserSummaryLayout from "../mainLayout/UserSummaryLayout";
 
 interface Props {
-  user: User;
+  user: UserSummary;
   featurePath: string;
 }
 

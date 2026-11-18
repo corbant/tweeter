@@ -1,39 +1,52 @@
 import { useCallback, useMemo, useState } from "react";
-import { User, AuthToken } from "tweeter-shared";
+import { UserProfile, UserProfileData } from "tweeter-shared";
 import { UserInfoContext, UserInfoActionsContext } from "./UserInfoContexts";
 import { UserInfo } from "./UserInfo";
+import { AuthStorage } from "../../lib/AuthStorage";
 
 const CURRENT_USER_KEY: string = "CurrentUserKey";
-const AUTH_TOKEN_KEY: string = "AuthTokenKey";
 
 interface Props {
   children: React.ReactNode;
 }
 
 const UserInfoProvider: React.FC<Props> = ({ children }) => {
-  const saveToLocalStorage = (currentUser: User, authToken: AuthToken): void => {
-    localStorage.setItem(CURRENT_USER_KEY, currentUser.toJson());
-    localStorage.setItem(AUTH_TOKEN_KEY, authToken.toJson());
+  const saveUser = (currentUser: UserProfile, remember: boolean): void => {
+    const json = JSON.stringify(currentUser.toJSON());
+
+    if (remember) {
+      sessionStorage.removeItem(CURRENT_USER_KEY);
+      localStorage.setItem(CURRENT_USER_KEY, json);
+    } else {
+      localStorage.removeItem(CURRENT_USER_KEY);
+      sessionStorage.setItem(CURRENT_USER_KEY, json);
+    }
   };
 
   const retrieveFromLocalStorage = (): UserInfo => {
-    const loggedInUser = User.fromJson(localStorage.getItem(CURRENT_USER_KEY));
-    const authToken = AuthToken.fromJson(localStorage.getItem(AUTH_TOKEN_KEY));
+    const storedUser =
+      localStorage.getItem(CURRENT_USER_KEY) ?? sessionStorage.getItem(CURRENT_USER_KEY);
+    let loggedInUser: UserProfile | null = null;
+
+    if (storedUser) {
+      loggedInUser = UserProfile.fromJSON(JSON.parse(storedUser) as UserProfileData);
+    }
+
+    const authToken = AuthStorage.getToken();
 
     if (!!loggedInUser && !!authToken) {
       return {
         currentUser: loggedInUser,
-        displayedUser: loggedInUser,
-        authToken: authToken
+        displayedUser: loggedInUser
       };
     } else {
-      return { currentUser: null, displayedUser: null, authToken: null };
+      return { currentUser: null, displayedUser: null };
     }
   };
 
   const clearLocalStorage = (): void => {
     localStorage.removeItem(CURRENT_USER_KEY);
-    localStorage.removeItem(AUTH_TOKEN_KEY);
+    sessionStorage.removeItem(CURRENT_USER_KEY);
   };
 
   const [userInfo, setUserInfo] = useState({
@@ -41,23 +54,16 @@ const UserInfoProvider: React.FC<Props> = ({ children }) => {
   });
 
   const updateUserInfo = useCallback(
-    (
-      currentUser: User,
-      displayedUser: User | null,
-      authToken: AuthToken,
-      remember: boolean = false
-    ) => {
+    (currentUser: UserProfile, displayedUser: UserProfile | null, remember: boolean = false) => {
       setUserInfo(() => {
         return {
           currentUser: currentUser,
-          displayedUser: displayedUser,
-          authToken: authToken
+          displayedUser: displayedUser
         };
       });
 
-      if (remember) {
-        saveToLocalStorage(currentUser, authToken);
-      }
+      AuthStorage.setRememberMe(remember);
+      saveUser(currentUser, remember);
     },
     []
   );
@@ -66,15 +72,15 @@ const UserInfoProvider: React.FC<Props> = ({ children }) => {
     setUserInfo(() => {
       return {
         currentUser: null,
-        displayedUser: null,
-        authToken: null
+        displayedUser: null
       };
     });
 
     clearLocalStorage();
+    AuthStorage.clearToken();
   }, []);
 
-  const setDisplayedUser = useCallback((user: User) => {
+  const setDisplayedUser = useCallback((user: UserProfile) => {
     setUserInfo((previous) => {
       return { ...previous, displayedUser: user };
     });

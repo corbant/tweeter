@@ -9,7 +9,7 @@ import { usePresenter } from "../../presenter";
 
 const AppNavbar = () => {
   const location = useLocation();
-  const { authToken, displayedUser } = useUserInfo();
+  const { displayedUser } = useUserInfo();
   const { clearUserInfo } = useUserInfoActions();
   const navigate = useNavigate();
   const { displayInfoMessage, displayErrorMessage, deleteMessage } = useMessageActions();
@@ -91,7 +91,7 @@ const AppNavbar = () => {
             <Nav.Item>
               <NavLink
                 id="logout"
-                onClick={() => presenter.logOut(authToken!)}
+                onClick={() => presenter.logOut()}
                 to={location.pathname}
                 className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
               >

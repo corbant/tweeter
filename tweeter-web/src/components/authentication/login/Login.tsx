@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthenticationFormLayout from "../AuthenticationFormLayout";
-import { AuthToken, User } from "tweeter-shared";
+import { UserProfile } from "tweeter-shared";
 import AuthenticationFields from "../AuthenticationFields";
 import { useMessageActions } from "../../toaster/MessageHooks";
 import { useUserInfoActions } from "../../userInfo/UserInfoHooks";
@@ -35,8 +35,8 @@ const Login = (props: Props) => {
     }
   };
 
-  const loginSuccess = (user: User, authToken: AuthToken, rememberMe: boolean) => {
-    updateUserInfo(user, user, authToken, rememberMe);
+  const loginSuccess = (user: UserProfile, rememberMe: boolean) => {
+    updateUserInfo(user, user, rememberMe);
 
     if (!!props.originalUrl) {
       navigate(props.originalUrl);

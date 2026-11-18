@@ -1,6 +1,6 @@
 import UserService from "../model/service/UserService";
 import { MessageView, Presenter } from "./Presenter";
-import { ServerFacade } from "../lib/ServerFacade";
+import { serverFacade, ServerFacade } from "../lib/ServerFacade";
 
 export interface AppNavbarView extends MessageView {
   logoutSuccess: () => void;
@@ -9,7 +9,7 @@ export interface AppNavbarView extends MessageView {
 export class AppNavbarPresenter extends Presenter<AppNavbarView> {
   private _userService: UserService;
 
-  public constructor(view: AppNavbarView, facade: ServerFacade) {
+  public constructor(view: AppNavbarView, facade: ServerFacade = serverFacade) {
     super(view);
     this._userService = new UserService(facade);
   }

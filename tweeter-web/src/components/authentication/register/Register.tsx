@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import { ChangeEvent, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthenticationFormLayout from "../AuthenticationFormLayout";
-import { AuthToken, User } from "tweeter-shared";
+import { UserProfile } from "tweeter-shared";
 import AuthenticationFields from "../AuthenticationFields";
 import { useMessageActions } from "../../toaster/MessageHooks";
 import { useUserInfoActions } from "../../userInfo/UserInfoHooks";
@@ -71,8 +71,8 @@ const Register = () => {
     }
   };
 
-  const registerSuccess = (user: User, authToken: AuthToken, rememberMe: boolean) => {
-    updateUserInfo(user, user, authToken, rememberMe);
+  const registerSuccess = (user: UserProfile, rememberMe: boolean) => {
+    updateUserInfo(user, user, rememberMe);
     navigate(`/feed/${user.alias}`);
   };
 
