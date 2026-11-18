@@ -12,7 +12,8 @@ interface AuthorizerContext {
 export const handler: APIGatewayProxyHandlerV2WithLambdaAuthorizer<AuthorizerContext> = async (
   event
 ): Promise<APIGatewayProxyResultV2> => {
-  const bodyResult = createStatusRequestSchema.safeParse(event.body);
+  const body = JSON.parse(event.body ?? "");
+  const bodyResult = createStatusRequestSchema.safeParse(body);
 
   if (!bodyResult.success) {
     return {

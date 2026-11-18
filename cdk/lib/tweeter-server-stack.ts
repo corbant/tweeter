@@ -152,6 +152,11 @@ export class TweeterServerStack extends cdk.Stack {
       defaultAuthorizer: authorizer
     });
 
+    const httpApiUrl = new cdk.CfnOutput(this, "TweeterApiUrl", {
+      value: httpApi.url!,
+      description: "Base URL for the Tweeter API"
+    });
+
     // GET /users/{alias}
     const getProfileRoute = httpApi.addRoutes({
       path: "/users/{alias}",

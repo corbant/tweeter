@@ -11,7 +11,8 @@ import UserService from "../../services/user";
 export const handler: APIGatewayProxyHandlerV2<AuthResponse | ErrorResponse> = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2<AuthResponse | ErrorResponse>> => {
-  const bodyResult = loginRequestSchema.safeParse(event.body);
+  const body = JSON.parse(event.body ?? "");
+  const bodyResult = loginRequestSchema.safeParse(body);
 
   if (!bodyResult.success) {
     return {
