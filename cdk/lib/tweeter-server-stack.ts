@@ -5,6 +5,12 @@ import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Architecture, Runtime } from "aws-cdk-lib/aws-lambda";
 import * as apigateway from "aws-cdk-lib/aws-apigatewayv2";
 import { HttpLambdaIntegration } from "aws-cdk-lib/aws-apigatewayv2-integrations";
+import {
+  HttpLambdaAuthorizer,
+  HttpLambdaResponseType
+} from "aws-cdk-lib/aws-apigatewayv2-authorizers";
+import { Duration } from "aws-cdk-lib/core";
+import { HttpNoneAuthorizer } from "aws-cdk-lib/aws-apigatewayv2";
 
 interface Props extends cdk.StackProps {
   projectRoot?: string;
@@ -115,13 +121,30 @@ export class TweeterServerStack extends cdk.Stack {
       architecture: Architecture.ARM_64
     });
 
+    const authorizerLambda = new NodejsFunction(this, "AuthorizerLambda", {
+      runtime: Runtime.NODEJS_LATEST,
+      entry: path.join(__dirname, "../../tweeter-server/src/handlers/auth/authorizer.ts"),
+      handler: "handler",
+      projectRoot,
+      architecture: Architecture.ARM_64
+    });
+
+    const authorizer = new HttpLambdaAuthorizer("ApiAuthorizer", authorizerLambda, {
+      responseTypes: [HttpLambdaResponseType.SIMPLE],
+      identitySource: ["$request.header.Authorization"],
+      resultsCacheTtl: Duration.seconds(0)
+    });
+
+    const noAuthorizer = new HttpNoneAuthorizer();
+
     const httpApi = new apigateway.HttpApi(this, "TweeterApi", {
       corsPreflight: {
         allowHeaders: ["Authorization"],
         allowMethods: [apigateway.CorsHttpMethod.GET],
         allowOrigins: ["*"],
         maxAge: cdk.Duration.days(10)
-      }
+      },
+      defaultAuthorizer: authorizer
     });
 
     // GET /users/{alias}
@@ -184,13 +207,15 @@ export class TweeterServerStack extends cdk.Stack {
     const loginRoute = httpApi.addRoutes({
       path: "/auth/login",
       methods: [apigateway.HttpMethod.POST],
-      integration: new HttpLambdaIntegration("LoginLambdaIntegration", loginLambda)
+      integration: new HttpLambdaIntegration("LoginLambdaIntegration", loginLambda),
+      authorizer: noAuthorizer
     });
     // POST /auth/register
     const registerRoute = httpApi.addRoutes({
       path: "/auth/register",
       methods: [apigateway.HttpMethod.POST],
-      integration: new HttpLambdaIntegration("RegisterLambdaIntegration", registerLambda)
+      integration: new HttpLambdaIntegration("RegisterLambdaIntegration", registerLambda),
+      authorizer: noAuthorizer
     });
     // POST /auth/logout
     const logoutRoute = httpApi.addRoutes({
