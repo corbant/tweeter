@@ -40,6 +40,17 @@ export class TweeterServerStack extends cdk.Stack {
       architecture: Architecture.ARM_64
     });
 
+    const getIsFollowingLambda = new NodejsFunction(this, "FollowersLambda", {
+      runtime: Runtime.NODEJS_LATEST,
+      entry: path.join(
+        __dirname,
+        "../../tweeter-server/src/handlers/follows/getFollowingStatus.ts"
+      ),
+      handler: "handler",
+      projectRoot,
+      architecture: Architecture.ARM_64
+    });
+
     const getFeedLambda = new NodejsFunction(this, "FeedLambda", {
       runtime: Runtime.NODEJS_LATEST,
       entry: path.join(__dirname, "../../tweeter-server/src/handlers/statuses/listFeed.ts"),
@@ -117,6 +128,11 @@ export class TweeterServerStack extends cdk.Stack {
       integration: new HttpLambdaIntegration("FolloweesLambdaIntegration", getFolloweesLambda)
     });
     // GET /me/following/{alias}
+    const getIsFollowingRoute = httpApi.addRoutes({
+      path: "/me/following/{alias}",
+      methods: [apigateway.HttpMethod.GET],
+      integration: new HttpLambdaIntegration("IsFollowingLambdaIntegration", getIsFollowingLambda)
+    });
     // PUT /me/following/{alias}
     // DELETE /me/following/{alias}
     // GET /users/{alias}/feed

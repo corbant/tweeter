@@ -24,6 +24,7 @@ export { createStatusRequestSchema, type CreateStatusRequest } from "./model/api
 
 // Responses
 export { followListResponseSchema, type FollowListResponse } from "./model/api/follows";
+export { getIsFollowingResponseSchema, type IsFollowingResponse } from "./model/api/follows";
 export { errorResponseSchema, type ErrorResponse } from "./model/api/common";
 export { authResponseSchema, type AuthResponse } from "./model/api/auth";
 export { userProfileResponseSchema, type UserProfileResponse } from "./model/api/users";
