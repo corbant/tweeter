@@ -149,7 +149,7 @@ export class TweeterServerStack extends cdk.Stack {
 
     // GET /users/{alias}
     const getProfileRoute = httpApi.addRoutes({
-      path: "/users/{alias}/followers",
+      path: "/users/{alias}",
       methods: [apigateway.HttpMethod.GET],
       integration: new HttpLambdaIntegration("ProfileLambdaIntegration", getProfileLambda)
     });

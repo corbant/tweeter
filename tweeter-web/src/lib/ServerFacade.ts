@@ -8,6 +8,7 @@ import {
   Status,
   StatusListResponse,
   UserProfile,
+  UserProfileResponse,
   UserSummary
 } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
@@ -18,6 +19,17 @@ export class ServerFacade {
   private LIMIT = 10;
 
   private clientCommunicator = new ClientCommunicator(this.SERVER_URL);
+
+  public async getUserProfile(alias: string): Promise<UserProfile> {
+    const url = new URL(`/users/${alias}`);
+    const response = await this.clientCommunicator.doRequest<undefined, UserProfileResponse>(
+      undefined,
+      url.toString(),
+      "GET"
+    );
+    const user = UserProfile.fromJSON(response)!;
+    return user;
+  }
 
   public async getMoreFollowees(
     alias: string,
