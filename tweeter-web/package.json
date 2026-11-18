@@ -22,6 +22,8 @@
     "@types/react-dom": "^18.2.19",
     "bootstrap": "^5.3.3",
     "buffer": "^6.0.3",
+    "dotenv": "^18.0.10",
+    "isomorphic-fetch": "^3.0.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.1",
     "react-dom": "^18.2.0",
@@ -61,13 +63,16 @@
     "moduleNameMapper": {
       "\\.(css|less)$": "<rootDir>/test/__mocks__/styleMock.js"
     },
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/setupTests.ts"
+    ],
     "testEnvironment": "jsdom",
     "testMatch": [
       "<rootDir>/test/**/*.test.tsx",
       "<rootDir>/test/**/*.test.ts"
     ],
     "transform": {
-      "^.+\\.tsx?$": "ts-jest",
+      "^.+\\.tsx?$": "babel-jest",
       "\\.js$": "babel-jest"
     },
     "verbose": true

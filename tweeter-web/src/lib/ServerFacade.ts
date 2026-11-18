@@ -14,10 +14,19 @@ import {
 import { ClientCommunicator } from "./ClientCommunicator";
 import { AuthStorage } from "./AuthStorage";
 
-export class ServerFacade {
-  private SERVER_URL = import.meta.env.VITE_SERVER_BASE_URL;
+declare const process: {
+  env: Record<string, string | undefined>;
+};
 
-  private clientCommunicator = new ClientCommunicator(this.SERVER_URL);
+export class ServerFacade {
+  private SERVER_URL: string;
+
+  private clientCommunicator: ClientCommunicator;
+
+  public constructor(serverUrl?: string) {
+    this.SERVER_URL = serverUrl ?? process.env.VITE_SERVER_BASE_URL ?? "";
+    this.clientCommunicator = new ClientCommunicator(this.SERVER_URL);
+  }
 
   public async getUserProfile(alias: string): Promise<UserProfile> {
     const url = `/users/${alias}`;
