@@ -12,8 +12,6 @@ export const createStatusRequestSchema = z.object({
   content: z.string().check(z.minLength(1), z.maxLength(1000))
 });
 
-export const createStatusResponseSchema = statusSchema;
-
 export const statusListResponseSchema = z.extend(pagedResponseSchema, {
   items: z.array(statusSchema)
 });
@@ -21,5 +19,4 @@ export const statusListResponseSchema = z.extend(pagedResponseSchema, {
 export type StatusData = z.infer<typeof statusSchema>;
 
 export type CreateStatusRequest = z.infer<typeof createStatusRequestSchema>;
-export type CreateStatusResponse = z.infer<typeof createStatusResponseSchema>;
 export type StatusListResponse = z.infer<typeof statusListResponseSchema>;

@@ -16,8 +16,9 @@ class StatusService {
   ): Promise<[StatusData[], string | null]> {
     return this.getFakeData(userAlias, limit, cursor);
   }
-  public async postStatus(authToken: AuthToken, status: Status): Promise<void> {
-    FakeData.instance.fakeStatuses.push(status);
+  public async postStatus(userAlias: string, content: string): Promise<void> {
+    const user = FakeData.instance.findUserByAlias(userAlias);
+    FakeData.instance.fakeStatuses.push(new Status(content, user!, Date.now()));
   }
 
   private async getFakeData(

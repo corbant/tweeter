@@ -40,7 +40,7 @@ export class TweeterServerStack extends cdk.Stack {
       architecture: Architecture.ARM_64
     });
 
-    const getFeedLambda = new NodejsFunction(this, "FollowersLambda", {
+    const getFeedLambda = new NodejsFunction(this, "FeedLambda", {
       runtime: Runtime.NODEJS_LATEST,
       entry: path.join(__dirname, "../../tweeter-server/src/handlers/statuses/listFeed.ts"),
       handler: "handler",
@@ -48,9 +48,17 @@ export class TweeterServerStack extends cdk.Stack {
       architecture: Architecture.ARM_64
     });
 
-    const getStoryLambda = new NodejsFunction(this, "FollowersLambda", {
+    const getStoryLambda = new NodejsFunction(this, "StoryLambda", {
       runtime: Runtime.NODEJS_LATEST,
       entry: path.join(__dirname, "../../tweeter-server/src/handlers/statuses/listStatuses.ts"),
+      handler: "handler",
+      projectRoot,
+      architecture: Architecture.ARM_64
+    });
+
+    const createStatusLambda = new NodejsFunction(this, "StatusLambda", {
+      runtime: Runtime.NODEJS_LATEST,
+      entry: path.join(__dirname, "../../tweeter-server/src/handlers/statuses/createStatus.ts"),
       handler: "handler",
       projectRoot,
       architecture: Architecture.ARM_64
@@ -121,9 +129,14 @@ export class TweeterServerStack extends cdk.Stack {
     const getStoryRoute = httpApi.addRoutes({
       path: "/users/{alias}/story",
       methods: [apigateway.HttpMethod.GET],
-      integration: new HttpLambdaIntegration("FeedLambdaIntegration", getStoryLambda)
+      integration: new HttpLambdaIntegration("StoryLambdaIntegration", getStoryLambda)
     });
-    // POST /me/posts
+    // POST /me/statuses
+    const postStatusRoute = httpApi.addRoutes({
+      path: "/me/statuses",
+      methods: [apigateway.HttpMethod.POST],
+      integration: new HttpLambdaIntegration("StatusLambdaIntegration", createStatusLambda)
+    });
 
     // POST /auth/login
     const loginRoute = httpApi.addRoutes({
