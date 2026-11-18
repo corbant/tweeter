@@ -40,12 +40,28 @@ export class TweeterServerStack extends cdk.Stack {
       architecture: Architecture.ARM_64
     });
 
-    const getIsFollowingLambda = new NodejsFunction(this, "FollowersLambda", {
+    const getIsFollowingLambda = new NodejsFunction(this, "IsFollowingLambda", {
       runtime: Runtime.NODEJS_LATEST,
       entry: path.join(
         __dirname,
         "../../tweeter-server/src/handlers/follows/getFollowingStatus.ts"
       ),
+      handler: "handler",
+      projectRoot,
+      architecture: Architecture.ARM_64
+    });
+
+    const followLambda = new NodejsFunction(this, "FollowLambda", {
+      runtime: Runtime.NODEJS_LATEST,
+      entry: path.join(__dirname, "../../tweeter-server/src/handlers/follows/follow.ts"),
+      handler: "handler",
+      projectRoot,
+      architecture: Architecture.ARM_64
+    });
+
+    const unfollowLambda = new NodejsFunction(this, "UnfollowLambda", {
+      runtime: Runtime.NODEJS_LATEST,
+      entry: path.join(__dirname, "../../tweeter-server/src/handlers/follows/unfollow.ts"),
       handler: "handler",
       projectRoot,
       architecture: Architecture.ARM_64
@@ -134,7 +150,17 @@ export class TweeterServerStack extends cdk.Stack {
       integration: new HttpLambdaIntegration("IsFollowingLambdaIntegration", getIsFollowingLambda)
     });
     // PUT /me/following/{alias}
+    const followUserRoute = httpApi.addRoutes({
+      path: "/me/following/{alias}",
+      methods: [apigateway.HttpMethod.PUT],
+      integration: new HttpLambdaIntegration("FollowUserLambdaIntegration", followLambda)
+    });
     // DELETE /me/following/{alias}
+    const unfollowUserRoute = httpApi.addRoutes({
+      path: "/me/following/{alias}",
+      methods: [apigateway.HttpMethod.DELETE],
+      integration: new HttpLambdaIntegration("UnfollowUserLambdaIntegration", unfollowLambda)
+    });
     // GET /users/{alias}/feed
     const getFeedRoute = httpApi.addRoutes({
       path: "/users/{alias}/feed",
