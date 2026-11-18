@@ -9,13 +9,13 @@ import {
   StatusListResponse,
   UserProfile,
   UserProfileResponse,
-  UserSummary
+  UserSummary,
 } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 import { AuthStorage } from "./AuthStorage";
 
 export class ServerFacade {
-  private SERVER_URL = "";
+  private SERVER_URL = import.meta.env.VITE_SERVER_BASE_URL;
 
   private clientCommunicator = new ClientCommunicator(this.SERVER_URL);
 
@@ -24,7 +24,7 @@ export class ServerFacade {
     const response = await this.clientCommunicator.doRequest<undefined, UserProfileResponse>(
       undefined,
       url.toString(),
-      "GET"
+      "GET",
     );
     const user = UserProfile.fromJSON(response)!;
     return user;
@@ -33,7 +33,7 @@ export class ServerFacade {
   public async getMoreFollowees(
     alias: string,
     limit: number,
-    cursor: string | null
+    cursor: string | null,
   ): Promise<[UserSummary[], string | null]> {
     const url = new URL(`/users/${alias}/followees`);
     url.searchParams.set("limit", limit.toString());
@@ -43,7 +43,7 @@ export class ServerFacade {
     const response = await this.clientCommunicator.doRequest<undefined, FollowListResponse>(
       undefined,
       url.toString(),
-      "GET"
+      "GET",
     );
 
     const items: UserSummary[] | null = response.items
@@ -60,7 +60,7 @@ export class ServerFacade {
   public async getMoreFollowers(
     alias: string,
     limit: number,
-    cursor: string | null
+    cursor: string | null,
   ): Promise<[UserSummary[], string | null]> {
     const url = new URL(`/users/${alias}/followers`);
     url.searchParams.set("limit", limit.toString());
@@ -70,7 +70,7 @@ export class ServerFacade {
     const response = await this.clientCommunicator.doRequest<undefined, FollowListResponse>(
       undefined,
       url.toString(),
-      "GET"
+      "GET",
     );
 
     const items: UserSummary[] | null = response.items
@@ -89,7 +89,7 @@ export class ServerFacade {
     const response = await this.clientCommunicator.doRequest<undefined, IsFollowingResponse>(
       undefined,
       url.toString(),
-      "GET"
+      "GET",
     );
 
     const { isFollowing } = response;
@@ -107,14 +107,14 @@ export class ServerFacade {
     await this.clientCommunicator.doRequest<undefined, undefined>(
       undefined,
       url.toString(),
-      "DELETE"
+      "DELETE",
     );
   }
 
   public async loadFeed(
     alias: string,
     limit: number,
-    cursor: string | null
+    cursor: string | null,
   ): Promise<[Status[], string | null]> {
     const url = new URL(`/users/${alias}/feed`);
     url.searchParams.set("limit", limit.toString());
@@ -124,7 +124,7 @@ export class ServerFacade {
     const response = await this.clientCommunicator.doRequest<undefined, StatusListResponse>(
       undefined,
       url.toString(),
-      "GET"
+      "GET",
     );
 
     const items: Status[] | null = response.items
@@ -141,7 +141,7 @@ export class ServerFacade {
   public async loadStory(
     alias: string,
     limit: number,
-    cursor: string | null
+    cursor: string | null,
   ): Promise<[Status[], string | null]> {
     const url = new URL(`/users/${alias}/story`);
     url.searchParams.set("limit", limit.toString());
@@ -151,7 +151,7 @@ export class ServerFacade {
     const response = await this.clientCommunicator.doRequest<undefined, StatusListResponse>(
       undefined,
       url.toString(),
-      "GET"
+      "GET",
     );
 
     const items: Status[] | null = response.items
@@ -169,10 +169,10 @@ export class ServerFacade {
     const url = new URL(`/me/statuses`);
     await this.clientCommunicator.doRequest<CreateStatusRequest, undefined>(
       {
-        content
+        content,
       },
       url.toString(),
-      "POST"
+      "POST",
     );
   }
 
@@ -181,10 +181,10 @@ export class ServerFacade {
     const response = await this.clientCommunicator.doRequest<LoginRequest, AuthResponse>(
       {
         alias,
-        password
+        password,
       },
       url.toString(),
-      "POST"
+      "POST",
     );
     AuthStorage.setToken(response.authToken.token);
     const user = UserProfile.fromJSON(response.user)!;
@@ -196,7 +196,7 @@ export class ServerFacade {
     firstName: string,
     lastName: string,
     password: string,
-    imageKey: string
+    imageKey: string,
   ): Promise<UserProfile> {
     const url = new URL(`/auth/register`);
     const response = await this.clientCommunicator.doRequest<RegisterRequest, AuthResponse>(
@@ -205,10 +205,10 @@ export class ServerFacade {
         firstName,
         lastName,
         password,
-        imageKey
+        imageKey,
       },
       url.toString(),
-      "POST"
+      "POST",
     );
     AuthStorage.setToken(response.authToken.token);
     const user = UserProfile.fromJSON(response.user)!;
@@ -220,7 +220,7 @@ export class ServerFacade {
     await this.clientCommunicator.doRequest<undefined, undefined>(
       undefined,
       url.toString(),
-      "POST"
+      "POST",
     );
     AuthStorage.clearToken();
   }
