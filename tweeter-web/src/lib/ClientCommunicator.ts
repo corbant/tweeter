@@ -13,7 +13,7 @@ export class ClientCommunicator {
     endpoint: string,
     method: string,
     headers?: Headers
-  ): Promise<RES> {
+  ): Promise<RES | ErrorResponse | null> {
     if (headers && req) {
       headers.append("Content-Type", "application/json");
     } else if (req) {
@@ -38,13 +38,22 @@ export class ClientCommunicator {
 
     const resp: Response = await fetch(url, params);
 
-    if (resp.ok) {
-      const response: RES = await resp.json();
-      return response;
-    } else {
-      const error: ErrorResponse = await resp.json();
+    const responseText = await resp.text();
+
+    if (!resp.ok) {
+      if (!responseText) {
+        throw new Error(`Request failed with status ${resp.status}`);
+      }
+
+      const error = JSON.parse(responseText) as ErrorResponse;
       throw new Error(error.error);
     }
+
+    if (!responseText) {
+      return null;
+    }
+
+    return JSON.parse(responseText) as RES;
   }
 
   private getUrl(endpoint: string): string {

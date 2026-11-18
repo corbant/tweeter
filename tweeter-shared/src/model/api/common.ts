@@ -7,7 +7,7 @@ export const userAliasParamsSchema = z.object({
 });
 
 export const paginationSchema = z.object({
-  limit: z.optional(z.number().check(z.int(), z.minimum(1), z.maximum(50))),
+  limit: z.optional(z.coerce.number().check(z.int(), z.minimum(1), z.maximum(50))),
   cursor: z.optional(z.string())
 });
 
