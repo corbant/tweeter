@@ -36,11 +36,7 @@ class FollowService {
     limit: number,
     cursor: string | null
   ): Promise<[UserSummaryData[], string | null]> {
-    const [items, hasMore] = FakeData.instance.getPageOfUsers(cursor, limit, userAlias);
-    let nextCursor = null;
-    if (hasMore) {
-      nextCursor = items[items.length - 1].alias;
-    }
+    const [items, nextCursor] = FakeData.instance.getPageOfUsers(cursor, limit, userAlias);
     const data = items.map((user) => user.toJSON());
     return [data, nextCursor];
   }

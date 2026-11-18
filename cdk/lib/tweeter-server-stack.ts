@@ -40,6 +40,22 @@ export class TweeterServerStack extends cdk.Stack {
       architecture: Architecture.ARM_64
     });
 
+    const getFeedLambda = new NodejsFunction(this, "FollowersLambda", {
+      runtime: Runtime.NODEJS_LATEST,
+      entry: path.join(__dirname, "../../tweeter-server/src/handlers/statuses/listFeed.ts"),
+      handler: "handler",
+      projectRoot,
+      architecture: Architecture.ARM_64
+    });
+
+    const getStoryLambda = new NodejsFunction(this, "FollowersLambda", {
+      runtime: Runtime.NODEJS_LATEST,
+      entry: path.join(__dirname, "../../tweeter-server/src/handlers/statuses/listStatuses.ts"),
+      handler: "handler",
+      projectRoot,
+      architecture: Architecture.ARM_64
+    });
+
     const loginLambda = new NodejsFunction(this, "LoginLambda", {
       runtime: Runtime.NODEJS_LATEST,
       entry: path.join(__dirname, "../../tweeter-server/src/handlers/auth/login.ts"),
@@ -96,7 +112,17 @@ export class TweeterServerStack extends cdk.Stack {
     // PUT /me/following/{alias}
     // DELETE /me/following/{alias}
     // GET /users/{alias}/feed
+    const getFeedRoute = httpApi.addRoutes({
+      path: "/users/{alias}/feed",
+      methods: [apigateway.HttpMethod.GET],
+      integration: new HttpLambdaIntegration("FeedLambdaIntegration", getFeedLambda)
+    });
     // GET /users/{alias}/story
+    const getStoryRoute = httpApi.addRoutes({
+      path: "/users/{alias}/story",
+      methods: [apigateway.HttpMethod.GET],
+      integration: new HttpLambdaIntegration("FeedLambdaIntegration", getStoryLambda)
+    });
     // POST /me/posts
 
     // POST /auth/login

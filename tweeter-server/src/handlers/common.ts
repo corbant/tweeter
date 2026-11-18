@@ -1,1 +1,1 @@
-const DEFAULT_LIST_LIMIT = 20;
+export const DEFAULT_LIST_LIMIT = 20;

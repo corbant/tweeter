@@ -26,5 +26,6 @@ export { followListResponseSchema, type FollowListResponse } from "./model/api/f
 export { errorResponseSchema, type ErrorResponse } from "./model/api/common";
 export { authResponseSchema, type AuthResponse } from "./model/api/auth";
 export { userProfileResponseSchema, type UserProfileResponse } from "./model/api/users";
+export { statusListResponseSchema, type StatusListResponse } from "./model/api/statuses";
 // Other
 export { FakeData } from "./util/FakeData";

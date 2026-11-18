@@ -160,7 +160,7 @@ export class FakeData {
     lastUser: string | null,
     limit: number,
     omit: string | null
-  ): [UserProfile[], boolean] {
+  ): [UserProfile[], string | null] {
     let userIndex = 0;
 
     // Find the index of the first user to be returned
@@ -186,7 +186,12 @@ export class FakeData {
       userIndex++;
     }
 
-    return [fakeUsersToReturn, userIndex < this.fakeUsers.length];
+    let nextCursor = null;
+    if (userIndex < this.fakeUsers.length) {
+      nextCursor = fakeUsersToReturn[fakeUsersToReturn.length - 1].alias;
+    }
+
+    return [fakeUsersToReturn, nextCursor];
   }
 
   /**
@@ -196,14 +201,14 @@ export class FakeData {
    * @param limit - maximum number of statuses to return (i.e., page size).
    * @returns a tuple containing a page of statuses and a "hasMorePages" flag.
    */
-  public getPageOfStatuses(lastStatus: Status | null, limit: number): [Status[], boolean] {
+  public getPageOfStatuses(lastStatus: string | null, limit: number): [Status[], string | null] {
     let statusIndex = 0;
 
     // Find the index of the first status to be returned
     if (lastStatus != null) {
       for (let i = 0; i < this.fakeStatuses.length; i++) {
         const currentStatus = this.fakeStatuses[i];
-        if (currentStatus.equals(lastStatus)) {
+        if (currentStatus.timestamp.toString() === lastStatus) {
           statusIndex = i + 1;
           break;
         }
@@ -219,7 +224,12 @@ export class FakeData {
       fakeStatusesToReturn.push(this.fakeStatuses[statusIndex]);
     }
 
-    return [fakeStatusesToReturn, statusIndex < this.fakeStatuses.length];
+    let nextCursor = null;
+    if (statusIndex < this.fakeStatuses.length) {
+      nextCursor = fakeStatusesToReturn[fakeStatusesToReturn.length - 1].timestamp.toString();
+    }
+
+    return [fakeStatusesToReturn, nextCursor];
   }
 
   /**

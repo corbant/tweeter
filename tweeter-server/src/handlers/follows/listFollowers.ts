@@ -8,6 +8,7 @@ import FollowService from "../../services/follow";
 import { APIGatewayProxyEventV2 } from "aws-lambda";
 import type { APIGatewayProxyHandlerV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import { paginationSchema } from "tweeter-shared/dist/model/api/common";
+import { DEFAULT_LIST_LIMIT } from "../common";
 
 export const handler: APIGatewayProxyHandlerV2<FollowListResponse | ErrorResponse> = async (
   event: APIGatewayProxyEventV2
@@ -29,6 +30,9 @@ export const handler: APIGatewayProxyHandlerV2<FollowListResponse | ErrorRespons
   if (!queryResult.success) {
     return {
       statusCode: 400,
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
         error: "Invalid query parameters",
         issues: queryResult.error.issues
