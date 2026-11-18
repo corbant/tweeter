@@ -1,6 +1,7 @@
-import { AuthToken, User } from "tweeter-shared";
+import { UserProfile } from "tweeter-shared";
 import { Presenter, View } from "./Presenter";
 import UserService from "../model/service/UserService";
+import { serverFacade, ServerFacade } from "../lib/ServerFacade";
 
 export interface PagedView<T> extends View {
   addItems: (items: T[]) => void;
@@ -8,25 +9,28 @@ export interface PagedView<T> extends View {
 
 export abstract class PagedPresenter<T, U> extends Presenter<PagedView<T>> {
   private _service: U;
-  private _hasMoreItems: boolean = true;
-  private _lastItem: T | null = null;
+  private _cursor: string | null = null;
   private _pageSize: number = 10;
   private itemDescription: string;
   private userService: UserService;
 
-  protected constructor(view: PagedView<T>, service: U, itemDescription: string) {
+  protected constructor(
+    view: PagedView<T>,
+    service: U,
+    itemDescription: string,
+    facade: ServerFacade = serverFacade
+  ) {
     super(view);
     this._service = service;
     this.itemDescription = itemDescription;
-    this.userService = new UserService();
+    this.userService = new UserService(facade);
   }
 
-  public async loadMoreItems(authToken: AuthToken, user: User): Promise<void> {
+  public async loadMoreItems(alias: string): Promise<void> {
     try {
-      const [items, hasMoreItems] = await this.getMoreItems(authToken, user);
+      const [items, cursor] = await this.getMoreItems(alias);
 
-      this._hasMoreItems = hasMoreItems;
-      this._lastItem = items.length > 0 ? items[items.length - 1] : null;
+      this._cursor = cursor;
       this.view.addItems(items);
     } catch (error) {
       this.view.displayErrorMessage(
@@ -36,15 +40,14 @@ export abstract class PagedPresenter<T, U> extends Presenter<PagedView<T>> {
   }
 
   public reset() {
-    this._lastItem = null;
-    this._hasMoreItems = true;
+    this._cursor = null;
   }
 
-  public async getUser(authToken: AuthToken, alias: string): Promise<User | null> {
-    return this.userService.getUserByAlias(authToken, alias);
+  public async getUser(alias: string): Promise<UserProfile | null> {
+    return this.userService.getUserByAlias(alias);
   }
 
-  protected abstract getMoreItems(authToken: AuthToken, user: User): Promise<[T[], boolean]>;
+  protected abstract getMoreItems(alias: string): Promise<[T[], string | null]>;
 
   protected get pageSize() {
     return this._pageSize;
@@ -54,11 +57,7 @@ export abstract class PagedPresenter<T, U> extends Presenter<PagedView<T>> {
     return this._service;
   }
 
-  protected get lastItem() {
-    return this._lastItem;
-  }
-
-  public get hasMoreItems() {
-    return this._hasMoreItems;
+  public get cursor() {
+    return this._cursor;
   }
 }

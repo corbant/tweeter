@@ -1,18 +1,19 @@
 import { Buffer } from "buffer";
-import { AuthToken, User } from "tweeter-shared";
+import { UserProfile } from "tweeter-shared";
 import UserService from "../model/service/UserService";
 import { LoadingView, Presenter } from "./Presenter";
+import { serverFacade, ServerFacade } from "../lib/ServerFacade";
 
 export interface RegisterView extends LoadingView {
-  registerSuccess: (user: User, authToken: AuthToken, rememberMe: boolean) => void;
+  registerSuccess: (user: UserProfile, rememberMe: boolean) => void;
 }
 
 export class RegisterPresenter extends Presenter<RegisterView> {
   private userService: UserService;
 
-  public constructor(view: RegisterView) {
+  public constructor(view: RegisterView, facade: ServerFacade = serverFacade) {
     super(view);
-    this.userService = new UserService();
+    this.userService = new UserService(facade);
   }
 
   public async processImageFile(file: File): Promise<{
@@ -45,7 +46,7 @@ export class RegisterPresenter extends Presenter<RegisterView> {
     try {
       this.view.setLoading(true);
 
-      const [user, authToken] = await this.register(
+      const user = await this.register(
         firstName,
         lastName,
         alias,
@@ -54,7 +55,7 @@ export class RegisterPresenter extends Presenter<RegisterView> {
         imageFileExtension
       );
 
-      this.view.registerSuccess(user, authToken, rememberMe);
+      this.view.registerSuccess(user, rememberMe);
     } catch (error) {
       this.view.displayErrorMessage(`Failed to register user because of exception: ${error}`);
     } finally {
@@ -69,24 +70,19 @@ export class RegisterPresenter extends Presenter<RegisterView> {
     password: string,
     userImageBytes: Uint8Array,
     imageFileExtension: string
-  ): Promise<[User, AuthToken]> {
+  ): Promise<UserProfile> {
     // Not neded now, but will be needed when you make the request to the server in milestone 3
     const imageStringBase64: string = Buffer.from(userImageBytes).toString("base64");
 
+    const imageKey = "test"; // TODO: change this when we add uploading logic
+
     // TODO: Replace with the result of calling the server
-    const [user, authToken] = await this.userService.register(
-      firstName,
-      lastName,
-      alias,
-      password,
-      userImageBytes,
-      imageFileExtension
-    );
+    const user = await this.userService.register(firstName, lastName, alias, password, imageKey);
 
     if (user === null) {
       throw new Error("Invalid registration");
     }
 
-    return [user, authToken];
+    return user;
   }
 }

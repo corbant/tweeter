@@ -225,3 +225,5 @@ export class ServerFacade {
     AuthStorage.clearToken();
   }
 }
+
+export const serverFacade = new ServerFacade();

@@ -1,19 +1,15 @@
-import { AuthToken, Status, User } from "tweeter-shared";
+import { Status } from "tweeter-shared";
 import { PagedStatusItemPresenter, PagedStatusItemView } from "./PagedStatusItemPresenter";
+import { serverFacade, ServerFacade } from "../lib/ServerFacade";
 
 export class StoryPresenter extends PagedStatusItemPresenter {
-  public constructor(view: PagedStatusItemView) {
-    super(view, "story");
+  public constructor(view: PagedStatusItemView, facade: ServerFacade = serverFacade) {
+    super(view, "story", facade);
   }
 
-  protected async getMoreItems(authToken: AuthToken, user: User): Promise<[Status[], boolean]> {
-    const [newItems, hasMore] = await this.service.getStory(
-      authToken,
-      user.alias,
-      this.pageSize,
-      this.lastItem
-    );
+  protected async getMoreItems(alias: string): Promise<[Status[], string | null]> {
+    const [newItems, cursor] = await this.service.getStory(alias, this.pageSize, this.cursor);
 
-    return [newItems, hasMore];
+    return [newItems, cursor];
   }
 }

@@ -1,28 +1,25 @@
-import { AuthToken, User } from "tweeter-shared";
+import { UserProfile, UserSummary } from "tweeter-shared";
 import UserService from "../model/service/UserService";
 import { Presenter, View } from "./Presenter";
+import { serverFacade, ServerFacade } from "../lib/ServerFacade";
 
 export interface UserNavigationView extends View {
-  userFound: (user: User) => void;
+  userFound: (user: UserProfile) => void;
 }
 
 export class UserNavigationPresenter extends Presenter<UserNavigationView> {
   private userService: UserService;
 
-  public constructor(view: UserNavigationView) {
+  public constructor(view: UserNavigationView, facade: ServerFacade = serverFacade) {
     super(view);
-    this.userService = new UserService();
+    this.userService = new UserService(facade);
   }
 
-  public async navigateToUser(
-    authToken: AuthToken,
-    displayedUser: User,
-    targetText: string
-  ): Promise<void> {
+  public async navigateToUser(displayedUser: UserProfile, targetText: string): Promise<void> {
     try {
       const alias = this.extractAlias(targetText);
 
-      const toUser = await this.getUser(authToken!, alias);
+      const toUser = await this.getUser(alias);
 
       if (toUser) {
         if (!toUser.equals(displayedUser!)) {
@@ -36,10 +33,10 @@ export class UserNavigationPresenter extends Presenter<UserNavigationView> {
 
   private extractAlias(value: string): string {
     const index = value.indexOf("@");
-    return value.substring(index);
+    return value.substring(index + 1);
   }
 
-  private async getUser(authToken: AuthToken, alias: string): Promise<User | null> {
-    return this.userService.getUserByAlias(authToken, alias);
+  private async getUser(alias: string): Promise<UserProfile | null> {
+    return this.userService.getUserByAlias(alias);
   }
 }
