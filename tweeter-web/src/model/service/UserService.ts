@@ -1,4 +1,4 @@
-import { FakeData, AuthTokenData, UserProfileData, UserProfile } from "tweeter-shared";
+import { UserProfile } from "tweeter-shared";
 import { ServerFacade } from "../../lib/ServerFacade";
 
 class UserService {
